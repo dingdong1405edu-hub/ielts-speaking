@@ -1,0 +1,81 @@
+
+> dingdonghsk@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.5
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./app/(dashboard)/exam/[examId]/page.tsx
+58:6  Warning: React Hook useEffect has missing dependencies: 'config' and 'handleSubmit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/grammar/QuizGame.tsx
+103:6  Warning: React Hook useCallback has a missing dependency: 'saveResult'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/40) ...
+   Generating static pages (10/40) 
+   Generating static pages (20/40) 
+   Generating static pages (30/40) 
+ ✓ Generating static pages (40/40)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    185 B          94.5 kB
+├ ○ /_not-found                          875 B          88.4 kB
+├ ƒ /admin                               1.95 kB        96.2 kB
+├ ƒ /admin/grammar                       3.83 kB         119 kB
+├ ƒ /admin/vocabulary                    3.19 kB         119 kB
+├ ƒ /api/admin/grammar                   0 B                0 B
+├ ƒ /api/admin/stats                     0 B                0 B
+├ ƒ /api/admin/vocabulary                0 B                0 B
+├ ƒ /api/ai/chat-tutor                   0 B                0 B
+├ ƒ /api/ai/explain-grammar              0 B                0 B
+├ ƒ /api/ai/generate-lesson              0 B                0 B
+├ ƒ /api/ai/generate-quiz                0 B                0 B
+├ ƒ /api/auth/[...nextauth]              0 B                0 B
+├ ƒ /api/auth/register                   0 B                0 B
+├ ƒ /api/exam                            0 B                0 B
+├ ƒ /api/export/pdf                      0 B                0 B
+├ ƒ /api/grammar-progress                0 B                0 B
+├ ○ /api/health                          0 B                0 B
+├ ƒ /api/history                         0 B                0 B
+├ ƒ /api/lessons                         0 B                0 B
+├ ƒ /api/lessons/[lessonId]              0 B                0 B
+├ ƒ /api/seed                            0 B                0 B
+├ ƒ /api/speech/score                    0 B                0 B
+├ ƒ /api/speech/transcribe               0 B                0 B
+├ ƒ /api/user                            0 B                0 B
+├ ƒ /api/user/progress                   0 B                0 B
+├ ƒ /api/vocabulary                      0 B                0 B
+├ ƒ /dashboard                           185 B          94.5 kB
+├ ƒ /exam                                185 B          94.5 kB
+├ ƒ /exam/[examId]                       4.53 kB         111 kB
+├ ƒ /grammar                             4.84 kB         107 kB
+├ ƒ /grammar/[lessonId]                  7.39 kB         113 kB
+├ ƒ /history                             4.46 kB         116 kB
+├ ƒ /listening                           4.51 kB         120 kB
+├ ○ /login                               3.42 kB         140 kB
+├ ƒ /profile                             7.08 kB         123 kB
+├ ƒ /reading                             4.79 kB         120 kB
+├ ○ /register                            3.03 kB         145 kB
+├ ƒ /speaking                            5.46 kB         111 kB
+├ ƒ /vocabulary                          4.69 kB         107 kB
+├ ƒ /vocabulary/flashcard                4.76 kB         120 kB
+└ ƒ /writing                             4.74 kB         120 kB
++ First Load JS shared by all            87.5 kB
+  ├ chunks/23-92251fcc36fcaf3f.js        31.7 kB
+  ├ chunks/fd9d1056-449633b3bd7d56db.js  53.6 kB
+  └ other shared chunks (total)          2.16 kB
+
+
+ƒ Middleware                             106 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
