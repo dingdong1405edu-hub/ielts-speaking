@@ -9,7 +9,7 @@ import { Leaderboard } from '@/components/dashboard/Leaderboard'
 import { UsageBanner } from '@/components/dashboard/UsageBanner'
 import { Badge } from '@/components/ui/badge'
 import { Mic, BookOpen, FileText, ChevronRight, Calendar } from 'lucide-react'
-import { cn, formatBandScore, getBandColor, getTopicEmoji } from '@/lib/utils'
+import { cn, formatBandScore, getTopicEmoji } from '@/lib/utils'
 import type { PracticeSession } from '@prisma/client'
 
 // Helper: extract overall score from a session's scores JSON
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
       accentBorder: 'rgba(59,130,246,0.25)',
     },
     {
-      href: '/practice/full-test',
+      href: '/full-test',
       icon: FileText,
       label: 'Bài kiểm tra đầy đủ',
       description: 'Cả 3 phần IELTS',
@@ -107,11 +107,7 @@ export default async function DashboardPage() {
   ]
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 md:pt-8 md:pb-8 space-y-8">
 
         {/* ── Header ───────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -168,19 +164,12 @@ export default async function DashboardPage() {
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="group flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-md"
+                  className="quick-action-card group flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-md"
                   style={{
                     background: 'var(--bg-card)',
                     borderColor: 'var(--border)',
-                  }}
-                  onMouseEnter={(e) => {
-                    ;(e.currentTarget as HTMLElement).style.borderColor =
-                      action.accentBorder
-                  }}
-                  onMouseLeave={(e) => {
-                    ;(e.currentTarget as HTMLElement).style.borderColor =
-                      'var(--border)'
-                  }}
+                    '--card-accent-border': action.accentBorder,
+                  } as React.CSSProperties}
                 >
                   <div
                     className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-200 group-hover:scale-105"
@@ -326,7 +315,7 @@ export default async function DashboardPage() {
                       return (
                         <tr
                           key={s.id}
-                          className="group transition-colors duration-100"
+                          className="session-row group transition-colors duration-100"
                           style={
                             {
                               borderBottom: isLast
@@ -334,14 +323,6 @@ export default async function DashboardPage() {
                                 : '1px solid var(--border)',
                             } as React.CSSProperties
                           }
-                          onMouseEnter={(e) => {
-                            ;(e.currentTarget as HTMLElement).style.background =
-                              'color-mix(in srgb, var(--bg-surface) 50%, transparent 50%)'
-                          }}
-                          onMouseLeave={(e) => {
-                            ;(e.currentTarget as HTMLElement).style.background =
-                              ''
-                          }}
                         >
                           <td className="px-5 py-3.5">
                             <div className="flex items-center gap-2.5">
@@ -401,7 +382,7 @@ export default async function DashboardPage() {
                           </td>
                           <td className="px-5 py-3.5 text-right">
                             <Link
-                              href={`/practice/session/${s.id}`}
+                              href={`/results/${s.id}`}
                               className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-xs text-blue-400 hover:text-blue-300 flex items-center gap-0.5 justify-end"
                             >
                               Xem lại <ChevronRight className="w-3 h-3" />
@@ -416,7 +397,6 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
-      </div>
     </div>
   )
 }

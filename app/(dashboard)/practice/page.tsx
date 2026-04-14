@@ -230,11 +230,8 @@ export default function PracticePage() {
   }
 
   return (
-    <div
-      className="min-h-screen pb-20"
-      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}
-    >
-      <div className="max-w-3xl mx-auto px-4 py-10">
+    <div>
+      <div className="max-w-3xl mx-auto px-4 pt-6 pb-24 md:pt-8 md:pb-8">
 
         {/* Header */}
         <motion.div

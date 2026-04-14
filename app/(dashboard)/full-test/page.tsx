@@ -8,11 +8,11 @@ import {
   ChevronRight,
   CheckCircle2,
   AlertCircle,
-  Loader2,
   Volume2,
   BookOpen,
   User,
 } from 'lucide-react'
+import Link from 'next/link'
 import AudioRecorder from '@/components/audio/AudioRecorder'
 
 // ---------------------------------------------------------------------------
@@ -552,18 +552,18 @@ function ResultsScreen({ results, onRetry }: ResultsScreenProps) {
           <Mic className="w-4 h-4" />
           Take Full Test Again
         </button>
-        <a
+        <Link
           href="/practice"
           className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 font-medium transition-colors duration-200"
         >
           Topic Practice
-        </a>
-        <a
+        </Link>
+        <Link
           href="/"
           className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 font-medium transition-colors duration-200"
         >
           Dashboard
-        </a>
+        </Link>
       </div>
     </motion.div>
   )
@@ -687,7 +687,7 @@ export default function FullTestPage() {
   async function submitAnswers(
     sessionId: string,
     answers: AnswerRecord[],
-    questions: Question[],
+    _questions: Question[],
   ) {
     // Grade each answer
     const gradePromises = answers.map((answer) =>
@@ -927,7 +927,6 @@ export default function FullTestPage() {
         }, 1200)
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [part3Data, part3Index],
   )
 
@@ -1004,26 +1003,32 @@ export default function FullTestPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100">
-      {/* Top bar */}
+    <div className="pb-24 md:pb-8">
+      {/* Sticky top bar — shown during active test phases */}
       {phase !== 'intro' && phase !== 'loading' && phase !== 'results' && (
-        <div className="fixed top-0 left-0 right-0 z-40 bg-[#0B1120]/95 backdrop-blur-sm border-b border-white/5">
-          <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div
+          className="sticky top-0 z-30 px-4 sm:px-6 lg:px-8 py-3 border-b backdrop-blur-md"
+          style={{
+            background: 'var(--bg-base)',
+            borderColor: 'var(--border)',
+          }}
+        >
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
                 <Mic className="w-4 h-4 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-200">Full IELTS Speaking Test</p>
-                <p className="text-xs text-slate-500">Simulated examination</p>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Full IELTS Speaking Test</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Simulated examination</p>
               </div>
             </div>
 
             <PartProgressBar phase={phase} />
 
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-slate-500" />
-              <span className="text-xs text-slate-500 font-medium">~14 min</span>
+              <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+              <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>~14 min</span>
             </div>
           </div>
         </div>
@@ -1031,10 +1036,10 @@ export default function FullTestPage() {
 
       {/* Main content */}
       <div
-        className={`max-w-2xl mx-auto px-4 pb-20 ${
+        className={`max-w-2xl mx-auto px-4 sm:px-6 pb-8 ${
           phase !== 'intro' && phase !== 'loading' && phase !== 'results'
-            ? 'pt-24'
-            : 'pt-10'
+            ? 'pt-6'
+            : 'pt-8 md:pt-12'
         }`}
       >
         <AnimatePresence mode="wait">

@@ -209,7 +209,7 @@ body {
   transition-timing-function: ease;
 }
 
-/* Smooth theme transitions on common properties */
+/* Smooth theme transitions on common properties (theme switching only) */
 body * {
   transition-property: background-color, border-color, color;
   transition-duration: 200ms;
@@ -378,6 +378,36 @@ body * {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: var(--border-strong);
   border-radius: 100px;
+}
+
+/* ---------------------------------------------------------------------------
+   Prose overrides (theme-aware)
+--------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   Dashboard interactive hover effects (Server Component compatible)
+--------------------------------------------------------------------------- */
+
+/* Quick action cards: border accent on hover */
+.quick-action-card:hover {
+  border-color: var(--card-accent-border) !important;
+}
+
+/* Session table rows: highlight on hover */
+.session-row:hover {
+  background-color: var(--bg-card-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Safe-area padding utilities (iOS notch / home indicator)
+--------------------------------------------------------------------------- */
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* ---------------------------------------------------------------------------

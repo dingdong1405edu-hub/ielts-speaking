@@ -12,7 +12,6 @@ import {
   MessageSquare,
   FileText,
   BookOpen,
-  User,
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/providers/ThemeProvider";
@@ -25,17 +24,17 @@ import { cn } from "@/lib/utils";
 const drawerNavItems = [
   { label: "Dashboard",      href: "/dashboard",  icon: LayoutDashboard },
   { label: "Beginner Path",  href: "/beginner",   icon: Map             },
-  { label: "Topic Practice", href: "/topics",     icon: MessageSquare   },
-  { label: "Full Test",      href: "/test",       icon: FileText        },
+  { label: "Topic Practice", href: "/practice",   icon: MessageSquare   },
+  { label: "Full Test",      href: "/full-test",  icon: FileText        },
   { label: "Vocabulary",     href: "/vocabulary", icon: BookOpen        },
 ];
 
 const bottomTabs = [
   { label: "Home",     href: "/dashboard",  icon: LayoutDashboard },
-  { label: "Practice", href: "/topics",     icon: MessageSquare   },
-  { label: "Test",     href: "/test",       icon: FileText        },
+  { label: "Beginner", href: "/beginner",   icon: Map             },
+  { label: "Test",     href: "/full-test",  icon: FileText        },
   { label: "Vocab",    href: "/vocabulary", icon: BookOpen        },
-  { label: "Profile",  href: "/profile",    icon: User            },
+  { label: "Practice", href: "/practice",   icon: MessageSquare   },
 ];
 
 interface NavbarProps {

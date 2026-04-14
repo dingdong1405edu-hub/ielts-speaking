@@ -30,8 +30,8 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Dashboard",     href: "/dashboard",  icon: LayoutDashboard },
   { label: "Beginner Path", href: "/beginner",   icon: Map             },
-  { label: "Topic Practice",href: "/topics",     icon: MessageSquare   },
-  { label: "Full Test",     href: "/test",       icon: FileText        },
+  { label: "Topic Practice",href: "/practice",   icon: MessageSquare   },
+  { label: "Full Test",     href: "/full-test",  icon: FileText        },
   { label: "Vocabulary",    href: "/vocabulary", icon: BookOpen        },
 ];
 

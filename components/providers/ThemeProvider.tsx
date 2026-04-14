@@ -21,31 +21,29 @@ interface ThemeContextValue {
 
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
+function applyTheme(t: Theme) {
+  const root = document.documentElement;
+  if (t === "dark") {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Provider
 // ---------------------------------------------------------------------------
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = React.useState<Theme>("dark");
-  const [mounted, setMounted] = React.useState(false);
 
-  // Read persisted theme on mount and apply to <html>
+  // Sync React state with whatever the inline script already applied to <html>
   React.useEffect(() => {
     const stored = localStorage.getItem("theme") as Theme | null;
     const initial: Theme = stored === "light" ? "light" : "dark";
     setThemeState(initial);
     applyTheme(initial);
-    setMounted(true);
   }, []);
-
-  function applyTheme(t: Theme) {
-    const root = document.documentElement;
-    if (t === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }
 
   const setTheme = React.useCallback((t: Theme) => {
     setThemeState(t);
@@ -66,15 +64,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     () => ({ theme, setTheme, toggleTheme }),
     [theme, setTheme, toggleTheme]
   );
-
-  // Prevent flash: keep children invisible until theme is resolved
-  if (!mounted) {
-    return (
-      <ThemeContext.Provider value={value}>
-        <div style={{ visibility: "hidden" }}>{children}</div>
-      </ThemeContext.Provider>
-    );
-  }
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

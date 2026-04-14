@@ -18,7 +18,7 @@ import {
 // Animation helpers
 // ---------------------------------------------------------------------------
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 }
 
@@ -27,7 +27,13 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.1 } },
 }
 
-function InView({ children, className = '', id }: { children: React.ReactNode; className?: string; id?: string }) {
+function InView({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
   return (
@@ -209,50 +215,53 @@ function Header() {
 }
 
 // ---------------------------------------------------------------------------
-// Plan card
+// Plan card — wrapper handles popular badge spacing
 // ---------------------------------------------------------------------------
 function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
   return (
-    <motion.div
-      variants={fadeUp}
-      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-      className={`relative flex flex-col rounded-2xl border ${plan.color} bg-white/[0.04] p-7 backdrop-blur transition-all hover:bg-white/[0.07] ${plan.highlight ? 'shadow-xl shadow-emerald-500/10' : ''}`}
-    >
-      {/* Popular badge */}
-      {plan.tag && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-1 text-xs font-bold text-white shadow-lg">
-            <Star className="h-3 w-3 fill-current" />
-            {plan.tag}
-          </span>
-        </div>
-      )}
-
-      <div className="mb-1 text-sm font-semibold text-slate-400">{plan.name}</div>
-      <div className="mb-1 text-3xl font-extrabold text-white">{plan.price}</div>
-      <div className="mb-6 text-xs font-medium text-emerald-400">{plan.priceNote}</div>
-
-      <Link
-        href={plan.href}
-        className={`mb-7 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${plan.ctaClass}`}
+    /* Outer wrapper: top padding creates room for the badge on tagged cards */
+    <div className={plan.tag ? 'pt-5' : ''}>
+      <motion.div
+        variants={fadeUp}
+        whileHover={{ y: -6, transition: { duration: 0.2 } }}
+        className={`relative flex h-full flex-col rounded-2xl border ${plan.color} bg-white/[0.04] p-7 transition-colors hover:bg-white/[0.07] ${plan.highlight ? 'shadow-xl shadow-emerald-500/10' : ''}`}
       >
-        {plan.cta}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+        {/* Popular badge — sits on the card's top border */}
+        {plan.tag && (
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-1 text-xs font-bold text-white shadow-lg">
+              <Star className="h-3 w-3 fill-current" />
+              {plan.tag}
+            </span>
+          </div>
+        )}
 
-      <ul className="flex flex-col gap-3">
-        {plan.features.map(({ label, ok }) => (
-          <li key={label} className="flex items-start gap-2.5">
-            {ok ? (
-              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
-            ) : (
-              <span className="mt-0.5 h-4 w-4 flex-shrink-0 text-center text-xs leading-4 text-slate-700">—</span>
-            )}
-            <span className={`text-sm ${ok ? 'text-slate-200' : 'text-slate-600'}`}>{label}</span>
-          </li>
-        ))}
-      </ul>
-    </motion.div>
+        <div className="mb-1 text-sm font-semibold text-slate-400">{plan.name}</div>
+        <div className="mb-1 text-3xl font-extrabold text-white">{plan.price}</div>
+        <div className="mb-6 text-xs font-medium text-emerald-400">{plan.priceNote}</div>
+
+        <Link
+          href={plan.href}
+          className={`mb-7 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${plan.ctaClass}`}
+        >
+          {plan.cta}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+
+        <ul className="flex flex-col gap-3">
+          {plan.features.map(({ label, ok }) => (
+            <li key={label} className="flex items-start gap-2.5">
+              {ok ? (
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+              ) : (
+                <span className="mt-0.5 h-4 w-4 shrink-0 text-center text-xs leading-4 text-slate-700">—</span>
+              )}
+              <span className={`text-sm ${ok ? 'text-slate-200' : 'text-slate-600'}`}>{label}</span>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+    </div>
   )
 }
 
@@ -267,7 +276,7 @@ export default function PricingPage() {
       {/* ================================================================ */}
       {/* HERO                                                              */}
       {/* ================================================================ */}
-      <section className="relative overflow-hidden pt-32 pb-16 text-center">
+      <section className="relative pt-32 pb-16 text-center overflow-hidden">
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20"
           style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, transparent 65%)' }}
@@ -305,136 +314,152 @@ export default function PricingPage() {
       {/* ================================================================ */}
       {/* PLANS                                                             */}
       {/* ================================================================ */}
-      <InView id="plans" className="mx-auto max-w-6xl px-5 pb-24 md:px-8">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {plans.map((p) => (
-            <PlanCard key={p.id} plan={p} />
-          ))}
-        </div>
-
-        {/* Premium features callout */}
-        <motion.div
-          variants={fadeUp}
-          className="mt-10 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-8"
-        >
-          <h3 className="mb-5 text-center text-lg font-bold text-white">
-            Tất cả gói Premium bao gồm
-          </h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
-            {premiumFeatures.map((f) => (
-              <div key={f} className="flex items-start gap-2 text-sm text-slate-300">
-                <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" />
-                {f}
-              </div>
+      <section id="plans" className="w-full py-16">
+        <InView className="mx-auto max-w-6xl px-5 md:px-8">
+          {/* Grid — each PlanCard manages its own badge spacing via pt-5 wrapper */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {plans.map((p) => (
+              <PlanCard key={p.id} plan={p} />
             ))}
           </div>
-        </motion.div>
-      </InView>
+
+          {/* Premium features callout */}
+          <motion.div
+            variants={fadeUp}
+            className="mt-12 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-8"
+          >
+            <h3 className="mb-5 text-center text-lg font-bold text-white">
+              Tất cả gói Premium bao gồm
+            </h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+              {premiumFeatures.map((f) => (
+                <div key={f} className="flex items-start gap-2 text-sm text-slate-300">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                  {f}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </InView>
+      </section>
 
       {/* ================================================================ */}
       {/* PAYMENT STEPS                                                     */}
       {/* ================================================================ */}
-      <InView id="payment" className="mx-auto max-w-5xl px-5 pb-24 md:px-8">
-        <motion.div variants={fadeUp} className="mb-12 text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-            Cách{' '}
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              thanh toán
-            </span>
-          </h2>
-          <p className="mt-3 text-slate-400">Đơn giản — hoàn toàn bằng ngân hàng nội địa Việt Nam</p>
-        </motion.div>
+      <section id="payment" className="w-full py-16 bg-white/[0.015]">
+        <InView className="mx-auto max-w-5xl px-5 md:px-8">
+          <motion.div variants={fadeUp} className="mb-12 text-center">
+            <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+              Cách{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                thanh toán
+              </span>
+            </h2>
+            <p className="mt-3 text-slate-400">Đơn giản — hoàn toàn bằng ngân hàng nội địa Việt Nam</p>
+          </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-          {paymentSteps.map(({ n, icon: Icon, title, desc }) => (
-            <motion.div
-              key={n}
-              variants={fadeUp}
-              className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6"
-            >
-              <div className="relative inline-flex">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
-                  <Icon className="h-6 w-6 text-blue-400" />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+            {paymentSteps.map(({ n, icon: Icon, title, desc }) => (
+              <motion.div
+                key={n}
+                variants={fadeUp}
+                className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+              >
+                <div className="relative inline-flex self-start">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                    <Icon className="h-6 w-6 text-blue-400" />
+                  </div>
+                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                    {n}
+                  </span>
                 </div>
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                  {n}
-                </span>
-              </div>
-              <h3 className="text-sm font-bold text-white">{title}</h3>
-              <p className="text-xs leading-relaxed text-slate-400">{desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Bank info box */}
-        <motion.div
-          variants={fadeUp}
-          className="mt-8 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6"
-        >
-          <h4 className="mb-4 font-semibold text-amber-300">Thông tin chuyển khoản</h4>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { label: 'Ngân hàng', value: 'Vietcombank (VCB)' },
-              { label: 'Số tài khoản', value: '1234567890' },
-              { label: 'Chủ tài khoản', value: 'NGUYEN VAN A' },
-            ].map(({ label, value }) => (
-              <div key={label} className="rounded-xl bg-white/5 p-4">
-                <p className="mb-0.5 text-xs text-slate-500">{label}</p>
-                <p className="font-semibold text-white">{value}</p>
-              </div>
+                <h3 className="text-sm font-bold text-white">{title}</h3>
+                <p className="text-xs leading-relaxed text-slate-400">{desc}</p>
+              </motion.div>
             ))}
           </div>
-          <p className="mt-4 text-xs text-slate-400">
-            Nội dung chuyển khoản: <span className="font-mono text-amber-300">[Email của bạn] + [Gói mua]</span>
-            &nbsp;— ví dụ: <span className="font-mono text-slate-300">ban@gmail.com 2m</span>
-          </p>
-          <p className="mt-2 text-xs text-slate-400">
-            Sau khi chuyển khoản, gửi ảnh chụp màn hình qua Zalo:{' '}
-            <span className="font-semibold text-white">0909XXXXXX</span>
-          </p>
-        </motion.div>
-      </InView>
+
+          {/* Bank info box */}
+          <motion.div
+            variants={fadeUp}
+            className="mt-8 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6"
+          >
+            <h4 className="mb-4 font-semibold text-amber-300">Thông tin chuyển khoản</h4>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                { label: 'Ngân hàng', value: 'Vietcombank (VCB)' },
+                { label: 'Số tài khoản', value: '1234567890' },
+                { label: 'Chủ tài khoản', value: 'NGUYEN VAN A' },
+              ].map(({ label, value }) => (
+                <div key={label} className="rounded-xl bg-white/5 p-4">
+                  <p className="mb-0.5 text-xs text-slate-500">{label}</p>
+                  <p className="font-semibold text-white">{value}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-slate-400">
+              Nội dung chuyển khoản:{' '}
+              <span className="font-mono text-amber-300">[Email của bạn] + [Gói mua]</span>
+              {' '}— ví dụ:{' '}
+              <span className="font-mono text-slate-300">ban@gmail.com 2m</span>
+            </p>
+            <p className="mt-2 text-xs text-slate-400">
+              Sau khi chuyển khoản, gửi ảnh chụp màn hình qua Zalo:{' '}
+              <span className="font-semibold text-white">0909XXXXXX</span>
+            </p>
+          </motion.div>
+        </InView>
+      </section>
 
       {/* ================================================================ */}
       {/* BOTTOM CTA                                                        */}
       {/* ================================================================ */}
-      <InView className="pb-24">
-        <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
+      <section className="w-full py-16">
+        <InView className="mx-auto max-w-3xl px-5 md:px-8 text-center">
           <motion.div
             variants={fadeUp}
-            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-slate-900/60 p-10 backdrop-blur-xl sm:p-14"
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-slate-900/60 p-10 sm:p-14"
           >
             <div
-              className="pointer-events-none absolute inset-0 rounded-3xl opacity-40"
-              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.35) 0%, transparent 65%)' }}
+              className="pointer-events-none absolute inset-0 rounded-3xl"
+              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.3) 0%, transparent 65%)' }}
             />
-            <motion.h2 variants={fadeUp} className="relative mb-4 text-3xl font-extrabold tracking-tight md:text-4xl">
+            <motion.h2
+              variants={fadeUp}
+              className="relative mb-4 text-3xl font-extrabold tracking-tight md:text-4xl"
+            >
               Chưa chắc? Dùng{' '}
               <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
                 miễn phí trước
               </span>
             </motion.h2>
-            <motion.p variants={fadeUp} className="relative mx-auto mb-8 max-w-md text-slate-300">
+            <motion.p
+              variants={fadeUp}
+              className="relative mx-auto mb-8 max-w-md text-slate-300"
+            >
               25 lần luyện tập miễn phí, không cần thẻ tín dụng. Upgrade bất cứ khi nào bạn sẵn sàng.
             </motion.p>
-            <motion.div variants={fadeUp} className="relative flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <motion.div
+              variants={fadeUp}
+              className="relative flex flex-wrap items-center justify-center gap-3"
+            >
               <Link
                 href="/register"
-                className="group flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
+                className="group inline-flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
               >
                 Bắt đầu miễn phí
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="#plans"
-                className="flex h-12 items-center gap-2 rounded-xl border border-white/20 px-8 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
+                className="inline-flex h-12 items-center gap-2 rounded-xl border border-white/20 px-8 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
               >
                 Xem các gói Premium
               </Link>
             </motion.div>
           </motion.div>
-        </div>
-      </InView>
+        </InView>
+      </section>
 
       {/* ================================================================ */}
       {/* FOOTER                                                            */}

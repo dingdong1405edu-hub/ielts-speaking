@@ -21,8 +21,8 @@ import {
 // Animation variants
 // ---------------------------------------------------------------------------
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 }
 
 const stagger: Variants = {
@@ -30,9 +30,17 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.1 } },
 }
 
-function InView({ children, className = '', id }: { children: React.ReactNode; className?: string; id?: string }) {
+function InView({
+  children,
+  className = '',
+  id,
+}: {
+  children: React.ReactNode
+  className?: string
+  id?: string
+}) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const inView = useInView(ref, { once: true, margin: '-60px' })
   return (
     <motion.section
       id={id}
@@ -54,7 +62,6 @@ function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#0B1120]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-500/30">
             <Mic className="h-4 w-4 text-white" />
@@ -62,14 +69,12 @@ function Header() {
           <span className="text-sm font-bold text-white md:text-base">IELTS Speaking AI</span>
         </Link>
 
-        {/* Nav */}
         <nav className="hidden items-center gap-6 text-sm text-slate-400 md:flex">
           <Link href="#features" className="transition-colors hover:text-white">Tính năng</Link>
           <Link href="#how-it-works" className="transition-colors hover:text-white">Cách hoạt động</Link>
           <Link href="/pricing" className="transition-colors hover:text-white">Bảng giá</Link>
         </nav>
 
-        {/* Auth buttons */}
         <div className="flex items-center gap-2">
           <Link
             href="/login"
@@ -100,7 +105,6 @@ function MockupCard() {
       transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       className="relative mx-auto w-full max-w-sm rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl"
     >
-      {/* Top bar */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
@@ -112,16 +116,14 @@ function MockupCard() {
         </span>
       </div>
 
-      {/* Question */}
       <div className="mb-4 rounded-xl bg-white/5 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Câu hỏi</p>
-        <p className="text-sm text-slate-200 leading-relaxed">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Câu hỏi</p>
+        <p className="text-sm leading-relaxed text-slate-200">
           Describe a place you have visited that you found particularly interesting.
         </p>
       </div>
 
-      {/* Waveform */}
-      <div className="mb-4 flex items-center justify-center gap-1 h-10">
+      <div className="mb-4 flex h-10 items-center justify-center gap-1">
         {[4, 7, 5, 9, 6, 8, 4, 10, 7, 5, 9, 6, 8, 4, 7].map((h, i) => (
           <div
             key={i}
@@ -131,7 +133,6 @@ function MockupCard() {
         ))}
       </div>
 
-      {/* Scores */}
       <div className="grid grid-cols-2 gap-2">
         {[
           { label: 'Fluency', score: '7.5', color: 'text-emerald-400' },
@@ -165,7 +166,6 @@ const features = [
     description:
       'Điểm band score theo đúng 4 tiêu chí IELTS thật: Fluency, Vocabulary, Grammar và Pronunciation. Không nể nang, không làm đẹp.',
     color: 'from-amber-500 to-orange-500',
-    bg: 'bg-amber-500/10',
     ring: 'ring-amber-500/20',
   },
   {
@@ -174,7 +174,6 @@ const features = [
     description:
       'Nói xong là có nhận xét chi tiết ngay — fluency, từ vựng, ngữ pháp, phát âm. Biết lỗi sai và biết cách sửa ngay lập tức.',
     color: 'from-blue-500 to-cyan-500',
-    bg: 'bg-blue-500/10',
     ring: 'ring-blue-500/20',
   },
   {
@@ -183,7 +182,6 @@ const features = [
     description:
       'Lộ trình từng bước rõ ràng như Duolingo — từ beginner đến band 8. Streak hàng ngày, XP điểm thưởng, theo dõi tiến độ.',
     color: 'from-violet-500 to-purple-500',
-    bg: 'bg-violet-500/10',
     ring: 'ring-violet-500/20',
   },
 ]
@@ -253,32 +251,31 @@ export default function LandingPage() {
       {/* ================================================================ */}
       {/* HERO                                                              */}
       {/* ================================================================ */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
-        {/* Gradient orbs */}
-        <div className="pointer-events-none absolute inset-0">
+      <section className="relative min-h-screen flex items-center pt-16">
+        {/* Decorative background — overflow-hidden only on this wrapper */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
             className="absolute left-1/4 top-1/4 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20"
             style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 65%)' }}
           />
           <div
-            className="absolute right-1/4 bottom-1/4 h-[500px] w-[500px] translate-x-1/2 translate-y-1/2 rounded-full opacity-15"
-            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 65%)' }}
+            className="absolute right-1/4 bottom-1/4 h-[500px] w-[500px] translate-x-1/2 translate-y-1/2 rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 65%)', opacity: 0.15 }}
           />
-          {/* Mesh grid */}
           <div
-            className="absolute inset-0 opacity-[0.025]"
+            className="absolute inset-0"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
               backgroundSize: '48px 48px',
+              opacity: 0.025,
             }}
           />
         </div>
 
-        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-5 py-20 md:grid-cols-2 md:px-8 md:py-0">
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 md:px-8 py-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
           {/* Left: text */}
           <div>
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -289,12 +286,11 @@ export default function LandingPage() {
               Tin dùng bởi 10,000+ học viên IELTS
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-5xl lg:text-6xl"
+              className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
             >
               Nói tiếng Anh{' '}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
@@ -317,30 +313,28 @@ export default function LandingPage() {
               cải thiện từng tiêu chí và tự tin bước vào phòng thi.
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex flex-col gap-3 sm:flex-row"
+              className="mt-8 flex flex-wrap gap-3"
             >
               <Link
                 href="/register"
-                className="group flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
+                className="group inline-flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-6 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
               >
                 Bắt đầu miễn phí
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/pricing"
-                className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-base font-semibold text-white backdrop-blur transition hover:bg-white/10"
+                className="inline-flex h-12 items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-base font-semibold text-white transition hover:bg-white/10"
               >
                 <Play className="h-4 w-4 fill-current" />
                 Xem các gói
               </Link>
             </motion.div>
 
-            {/* Mini social proof */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -379,30 +373,32 @@ export default function LandingPage() {
       {/* ================================================================ */}
       {/* STATS BAR                                                         */}
       {/* ================================================================ */}
-      <InView className="border-y border-white/[0.07] bg-white/[0.02] py-12">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 sm:grid-cols-3 md:px-8">
-          {stats.map(({ value, label, icon: Icon }) => (
-            <motion.div
-              key={label}
-              variants={fadeUp}
-              className="flex flex-col items-center gap-3 text-center"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
-                <Icon className="h-6 w-6 text-blue-400" />
-              </div>
-              <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                {value}
-              </p>
-              <p className="text-sm text-slate-400">{label}</p>
-            </motion.div>
-          ))}
+      <InView className="w-full border-y border-white/[0.07] bg-white/[0.02] py-12">
+        <div className="mx-auto max-w-5xl px-5 md:px-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+            {stats.map(({ value, label, icon: Icon }) => (
+              <motion.div
+                key={label}
+                variants={fadeUp}
+                className="flex flex-col items-center gap-3 text-center"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                  <Icon className="h-6 w-6 text-blue-400" />
+                </div>
+                <p className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-3xl font-extrabold text-transparent">
+                  {value}
+                </p>
+                <p className="text-sm text-slate-400">{label}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </InView>
 
       {/* ================================================================ */}
       {/* FEATURES                                                          */}
       {/* ================================================================ */}
-      <InView id="features" className="py-24">
+      <InView id="features" className="w-full py-20">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <motion.div variants={fadeUp} className="mb-14 text-center">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-blue-400">
@@ -416,13 +412,13 @@ export default function LandingPage() {
             </h2>
           </motion.div>
 
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {features.map(({ icon: Icon, title, description, color, bg, ring }) => (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {features.map(({ icon: Icon, title, description, color, ring }) => (
               <motion.div
                 key={title}
                 variants={fadeUp}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`rounded-2xl border border-white/10 bg-white/[0.04] p-7 ring-1 ${ring} backdrop-blur transition-all hover:bg-white/[0.07]`}
+                className={`rounded-2xl border border-white/10 bg-white/[0.04] p-7 ring-1 ${ring} transition-colors hover:bg-white/[0.07]`}
               >
                 <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${color}`}>
                   <Icon className="h-6 w-6 text-white" />
@@ -438,7 +434,7 @@ export default function LandingPage() {
       {/* ================================================================ */}
       {/* HOW IT WORKS                                                      */}
       {/* ================================================================ */}
-      <InView id="how-it-works" className="py-24 bg-white/[0.015]">
+      <InView id="how-it-works" className="w-full bg-white/[0.015] py-20">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <motion.div variants={fadeUp} className="mb-14 text-center">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-violet-400">
@@ -452,14 +448,11 @@ export default function LandingPage() {
             </h2>
           </motion.div>
 
-          <div className="relative grid gap-10 md:grid-cols-3">
-            {/* Connector lines on desktop */}
-            <div className="pointer-events-none absolute top-8 left-1/3 right-1/3 hidden h-px bg-gradient-to-r from-blue-500/30 via-violet-500/30 to-purple-500/30 md:block" />
-
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {steps.map(({ n, icon: Icon, title, desc }) => (
-              <motion.div key={n} variants={fadeUp} className="flex flex-col items-start gap-4">
-                <div className="relative">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur">
+              <motion.div key={n} variants={fadeUp} className="flex flex-col gap-4">
+                <div className="relative inline-block self-start">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06]">
                     <Icon className="h-7 w-7 text-blue-400" />
                   </div>
                   <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-bold text-white">
@@ -479,7 +472,7 @@ export default function LandingPage() {
       {/* ================================================================ */}
       {/* PRICING TEASER                                                    */}
       {/* ================================================================ */}
-      <InView className="py-24">
+      <InView className="w-full py-20">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <motion.div variants={fadeUp} className="mb-14 text-center">
             <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-emerald-400">
@@ -494,46 +487,51 @@ export default function LandingPage() {
             <p className="mt-4 text-slate-400">Thanh toán chuyển khoản ngân hàng, kích hoạt trong 24 giờ</p>
           </motion.div>
 
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {/* Cards — popular card gets top padding so badge fits inside the row */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {pricingTeaser.map(({ name, price, desc, color, cta, href, ctaClass, popular }) => (
-              <motion.div
-                key={name}
-                variants={fadeUp}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`relative flex flex-col rounded-2xl border ${color} bg-white/[0.04] p-7 backdrop-blur transition-all hover:bg-white/[0.07]`}
-              >
-                {popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3.5 py-1 text-xs font-bold text-white shadow-lg">
-                      <Star className="h-3 w-3 fill-current" />
-                      Phổ biến nhất
-                    </span>
-                  </div>
-                )}
-                <p className="mb-1 text-sm font-semibold text-slate-400">{name}</p>
-                <p className="mb-1 text-3xl font-extrabold">{price}</p>
-                <p className="mb-6 text-sm text-emerald-400">{desc}</p>
-                <ul className="mb-6 flex flex-col gap-2">
-                  {['Luyện tập không giới hạn', 'AI chấm điểm 4 tiêu chí', 'Phản hồi chi tiết tức thì'].map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
-                      <CheckCircle className="h-4 w-4 flex-shrink-0 text-emerald-400" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={href}
-                  className={`mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${ctaClass}`}
+              <div key={name} className={popular ? 'pt-5' : ''}>
+                <motion.div
+                  variants={fadeUp}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className={`relative flex h-full flex-col rounded-2xl border ${color} bg-white/[0.04] p-7 transition-colors hover:bg-white/[0.07]`}
                 >
-                  {cta}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </motion.div>
+                  {popular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3.5 py-1 text-xs font-bold text-white shadow-lg">
+                        <Star className="h-3 w-3 fill-current" />
+                        Phổ biến nhất
+                      </span>
+                    </div>
+                  )}
+                  <p className="mb-1 text-sm font-semibold text-slate-400">{name}</p>
+                  <p className="mb-1 text-3xl font-extrabold">{price}</p>
+                  <p className="mb-6 text-sm text-emerald-400">{desc}</p>
+                  <ul className="mb-6 flex flex-col gap-2">
+                    {['Luyện tập không giới hạn', 'AI chấm điểm 4 tiêu chí', 'Phản hồi chi tiết tức thì'].map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-emerald-400" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={href}
+                    className={`mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${ctaClass}`}
+                  >
+                    {cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </motion.div>
+              </div>
             ))}
           </div>
 
           <motion.div variants={fadeUp} className="mt-8 text-center">
-            <Link href="/pricing" className="text-sm text-blue-400 transition hover:text-blue-300 underline underline-offset-4">
+            <Link
+              href="/pricing"
+              className="text-sm text-blue-400 underline underline-offset-4 transition hover:text-blue-300"
+            >
               Xem đầy đủ tính năng từng gói →
             </Link>
           </motion.div>
@@ -543,36 +541,45 @@ export default function LandingPage() {
       {/* ================================================================ */}
       {/* BOTTOM CTA                                                        */}
       {/* ================================================================ */}
-      <InView className="py-24">
-        <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
+      <InView className="w-full py-20">
+        <div className="mx-auto max-w-3xl px-5 md:px-8 text-center">
           <motion.div
             variants={fadeUp}
-            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-slate-900/60 p-10 backdrop-blur-xl sm:p-14"
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-slate-900/60 p-10 sm:p-14"
           >
             <div
-              className="pointer-events-none absolute inset-0 rounded-3xl opacity-50"
-              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.3) 0%, transparent 65%)' }}
+              className="pointer-events-none absolute inset-0 rounded-3xl"
+              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.25) 0%, transparent 65%)' }}
             />
-            <motion.h2 variants={fadeUp} className="relative mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <motion.h2
+              variants={fadeUp}
+              className="relative mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl"
+            >
               Sẵn sàng tăng{' '}
               <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
                 band score?
               </span>
             </motion.h2>
-            <motion.p variants={fadeUp} className="relative mx-auto mb-8 max-w-lg text-slate-300">
+            <motion.p
+              variants={fadeUp}
+              className="relative mx-auto mb-8 max-w-lg text-slate-300"
+            >
               Bắt đầu miễn phí với 25 lần luyện tập. Không cần thẻ tín dụng, không phí ẩn.
             </motion.p>
-            <motion.div variants={fadeUp} className="relative flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <motion.div
+              variants={fadeUp}
+              className="relative flex flex-wrap items-center justify-center gap-3"
+            >
               <Link
                 href="/register"
-                className="group flex h-13 items-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
+                className="group inline-flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-8 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
               >
                 Bắt đầu luyện tập ngay
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/pricing"
-                className="flex h-13 items-center gap-2 rounded-xl border border-white/20 px-8 py-3.5 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
+                className="inline-flex h-12 items-center gap-2 rounded-xl border border-white/20 px-8 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
               >
                 Xem bảng giá
               </Link>

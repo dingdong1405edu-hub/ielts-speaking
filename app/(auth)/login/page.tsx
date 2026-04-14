@@ -47,7 +47,7 @@ function FormInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full rounded-xl border bg-white/[0.05] py-3 pl-10 pr-${rightSlot ? '11' : '4'} text-sm text-white placeholder-slate-600 outline-none transition focus:ring-2 ${
+          className={`w-full rounded-xl border bg-white/[0.05] py-3 pl-10 text-sm text-white placeholder-slate-600 outline-none transition focus:ring-2 ${rightSlot ? 'pr-11' : 'pr-4'} ${
             error
               ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20'
               : 'border-white/10 focus:border-blue-500 focus:ring-blue-500/20'

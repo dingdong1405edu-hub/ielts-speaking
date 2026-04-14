@@ -77,45 +77,49 @@ const PART_LABELS: Record<string, string> = {
 // Confetti Component
 // ---------------------------------------------------------------------------
 
+const CONFETTI_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899']
+
+// Generated once at module load — stable across renders
+const CONFETTI_PIECES = Array.from({ length: 40 }, (_, i) => ({
+  color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  left: `${Math.random() * 100}%`,
+  delay: Math.random() * 2,
+  duration: 2 + Math.random() * 2,
+  size: 6 + Math.random() * 8,
+  isCircle: Math.random() > 0.5,
+  rotate: Math.random() * 720 - 360,
+}))
+
 function Confetti() {
-  const pieces = Array.from({ length: 40 })
-  const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899']
+  const pieces = CONFETTI_PIECES
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
-      {pieces.map((_, i) => {
-        const color = colors[i % colors.length]
-        const left = `${Math.random() * 100}%`
-        const delay = Math.random() * 2
-        const duration = 2 + Math.random() * 2
-        const size = 6 + Math.random() * 8
-
-        return (
-          <motion.div
-            key={i}
-            style={{
-              position: 'absolute',
-              left,
-              top: '-20px',
-              width: size,
-              height: size,
-              background: color,
-              borderRadius: Math.random() > 0.5 ? '50%' : '2px',
-            }}
-            initial={{ y: 0, rotate: 0, opacity: 1 }}
-            animate={{
-              y: typeof window !== 'undefined' ? window.innerHeight + 20 : 900,
-              rotate: Math.random() * 720 - 360,
-              opacity: [1, 1, 0],
-            }}
-            transition={{
-              duration,
-              delay,
-              ease: 'easeIn',
-            }}
-          />
-        )
-      })}
+      {pieces.map((piece, i) => (
+        <motion.div
+          key={i}
+          style={{
+            position: 'absolute',
+            left: piece.left,
+            top: '-20px',
+            width: piece.size,
+            height: piece.size,
+            background: piece.color,
+            borderRadius: piece.isCircle ? '50%' : '2px',
+          }}
+          initial={{ y: 0, rotate: 0, opacity: 1 }}
+          animate={{
+            y: typeof window !== 'undefined' ? window.innerHeight + 20 : 900,
+            rotate: piece.rotate,
+            opacity: [1, 1, 0],
+          }}
+          transition={{
+            duration: piece.duration,
+            delay: piece.delay,
+            ease: 'easeIn',
+          }}
+        />
+      ))}
     </div>
   )
 }
@@ -437,10 +441,10 @@ export default function ResultsPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
-          <p className="text-sm text-slate-400">Loading your results…</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading your results…</p>
         </div>
       </div>
     )
@@ -448,7 +452,7 @@ export default function ResultsPage({
 
   if (error || !sessionData) {
     return (
-      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4">
+      <div className="flex items-center justify-center min-h-[60vh] px-4">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertCircle className="w-10 h-10 text-red-400" />
           <p className="text-slate-200 font-medium">Could not load results</p>
@@ -467,7 +471,7 @@ export default function ResultsPage({
   const part = sessionData.part
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 pb-24">
+    <div className="pb-24 md:pb-8">
       {/* Confetti */}
       <AnimatePresence>{showConfetti && <Confetti />}</AnimatePresence>
 
@@ -491,7 +495,7 @@ export default function ResultsPage({
         )}
       </AnimatePresence>
 
-      <div className="max-w-2xl mx-auto px-4 py-10">
+      <div className="max-w-2xl mx-auto px-4 pt-6 pb-4 md:pt-8">
 
         {/* Header */}
         <motion.div

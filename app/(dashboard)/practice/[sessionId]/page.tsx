@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import AudioRecorder from '@/components/audio/AudioRecorder'
-import { formatBandScore, getBandColor, getTopicEmoji } from '@/lib/utils'
+import { getBandColor, getTopicEmoji } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -264,8 +264,8 @@ export default function PracticeSessionPage({
 
   if (stage === 'loading') {
     return (
-      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 text-slate-400">
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4" style={{ color: 'var(--text-muted)' }}>
           <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
           <p className="text-sm">Loading your session…</p>
         </div>
@@ -275,7 +275,7 @@ export default function PracticeSessionPage({
 
   if (stage === 'error') {
     return (
-      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4">
+      <div className="flex items-center justify-center min-h-[60vh] px-4">
         <div className="flex flex-col items-center gap-4 text-center max-w-sm">
           <AlertCircle className="w-10 h-10 text-red-400" />
           <p className="text-slate-200 font-medium">Something went wrong</p>
@@ -289,8 +289,8 @@ export default function PracticeSessionPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 pb-20">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="pb-24 md:pb-8">
+      <div className="max-w-2xl mx-auto px-4 pt-6 md:pt-8">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

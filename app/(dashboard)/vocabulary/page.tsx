@@ -279,8 +279,8 @@ export default function VocabularyPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 pb-20">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-6xl mx-auto px-4 pt-6 pb-24 md:pt-8 md:pb-8">
 
         {/* Page header */}
         <motion.div
@@ -294,7 +294,7 @@ export default function VocabularyPage() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Vocabulary Notebook</h1>
           </div>
-          <p className="text-slate-400 ml-[52px] text-sm">
+          <p className="ml-[52px] text-sm" style={{ color: 'var(--text-muted)' }}>
             {words.length} word{words.length !== 1 ? 's' : ''} saved
             {words.length > 0 && ` · ${learnedCount} learned`}
           </p>

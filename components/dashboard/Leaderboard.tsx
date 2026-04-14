@@ -76,7 +76,7 @@ export function Leaderboard({ currentUserId }: LeaderboardProps) {
       <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-amber-400" />
-          <CardTitle>This Week's Champions</CardTitle>
+          <CardTitle>{"This Week's Champions"}</CardTitle>
         </div>
         <p className="text-xs text-slate-500 mt-0.5">Top 10 by minutes practiced</p>
       </CardHeader>

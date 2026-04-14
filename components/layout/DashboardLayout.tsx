@@ -28,7 +28,7 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <div
-      className="flex min-h-screen transition-colors duration-200"
+      className="flex h-screen overflow-hidden transition-colors duration-200"
       style={{
         backgroundColor: "var(--bg-surface)",
         color: "var(--text-primary)",
@@ -38,19 +38,12 @@ export function DashboardLayout({
       <Sidebar user={user} onLogout={onLogout} />
 
       {/* Main content column */}
-      <div className="flex flex-col flex-1 min-w-0 min-h-screen">
+      <div className="flex flex-col flex-1 min-w-0">
         {/* Mobile navbar (top bar + drawer + bottom tabs) */}
         <Navbar user={user} onLogout={onLogout} />
 
-        {/* Page content */}
-        <main
-          className="flex-1 overflow-auto
-            px-4 py-6
-            md:px-6 md:py-8
-            lg:px-8
-            /* Extra bottom padding on mobile to clear the tab bar */
-            pb-24 md:pb-8"
-        >
+        {/* Page content scrolls here */}
+        <main className="flex-1 overflow-y-auto scrollbar-thin">
           {children}
         </main>
       </div>

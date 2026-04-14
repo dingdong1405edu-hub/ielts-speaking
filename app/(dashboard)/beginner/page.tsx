@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Flame, Star, X, Mic, BookOpen, Zap } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { RoadmapTrack, type Unit, type Lesson } from '@/components/beginner/RoadmapTrack'
 import dynamic from 'next/dynamic'
 
@@ -96,34 +96,46 @@ const LESSON_QUESTIONS: Record<string, string> = {
 // Confetti burst (CSS-only, lightweight)
 // ---------------------------------------------------------------------------
 
+const CONFETTI_COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899']
+
+// Generated once at module load — stable across renders
+const CONFETTI_PIECES = Array.from({ length: 28 }, (_, i) => ({
+  color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  left: `${Math.random() * 100}%`,
+  delay: Math.random() * 0.4,
+  duration: 1.2 + Math.random() * 0.8,
+  size: 8 + Math.random() * 8,
+  isCircle: Math.random() > 0.5,
+  rotate: Math.random() * 720 - 360,
+  x: Math.random() * 200 - 100,
+}))
+
 function ConfettiBurst() {
-  const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899']
-  const pieces = Array.from({ length: 28 }, (_, i) => i)
+  const pieces = CONFETTI_PIECES
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden="true">
-      {pieces.map((i) => {
-        const color = colors[i % colors.length]
-        const left = `${Math.random() * 100}%`
-        const delay = Math.random() * 0.4
-        const duration = 1.2 + Math.random() * 0.8
-        const size = 8 + Math.random() * 8
-
-        return (
-          <motion.div
-            key={i}
-            style={{ left, top: '-5%', width: size, height: size, backgroundColor: color, borderRadius: Math.random() > 0.5 ? '50%' : '2px' }}
-            initial={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
-            animate={{
-              y: '110vh',
-              opacity: [1, 1, 0],
-              rotate: Math.random() * 720 - 360,
-              x: Math.random() * 200 - 100,
-            }}
-            transition={{ duration, delay, ease: 'easeIn' }}
-          />
-        )
-      })}
+      {pieces.map((piece, i) => (
+        <motion.div
+          key={i}
+          style={{
+            left: piece.left,
+            top: '-5%',
+            width: piece.size,
+            height: piece.size,
+            backgroundColor: piece.color,
+            borderRadius: piece.isCircle ? '50%' : '2px',
+          }}
+          initial={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
+          animate={{
+            y: '110vh',
+            opacity: [1, 1, 0],
+            rotate: piece.rotate,
+            x: piece.x,
+          }}
+          transition={{ duration: piece.duration, delay: piece.delay, ease: 'easeIn' }}
+        />
+      ))}
     </div>
   )
 }
@@ -444,8 +456,8 @@ export default function BeginnerPage() {
   const completedCount = progressData.completedLessons.length
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 pb-20">
-      <div className="max-w-xl mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-xl mx-auto px-4 pt-6 pb-24 md:pt-8 md:pb-8">
 
         {/* Page header */}
         <motion.div
@@ -459,7 +471,7 @@ export default function BeginnerPage() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Beginner Path</h1>
           </div>
-          <p className="text-slate-400 ml-[52px] text-sm">
+          <p className="ml-[52px] text-sm" style={{ color: 'var(--text-muted)' }}>
             {completedCount} / {totalLessons} lessons completed
           </p>
         </motion.div>
