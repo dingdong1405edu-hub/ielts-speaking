@@ -12,33 +12,47 @@ interface DashboardLayoutProps {
     email?: string | null;
     image?: string | null;
   };
-  streak?: number;
   onLogout?: () => void;
 }
 
+/**
+ * Top-level dashboard layout shell.
+ *
+ * Desktop: sidebar (fixed width) + main content area (flex-1).
+ * Mobile:  top bar + bottom tab bar from <Navbar>; sidebar hidden.
+ */
 export function DashboardLayout({
   children,
   user,
-  streak,
   onLogout,
 }: DashboardLayoutProps) {
   return (
-    <div className="dark min-h-screen bg-[#0F172A] text-slate-100 font-sans">
-      {/* Desktop: side-by-side layout */}
-      <div className="flex">
-        {/* Sidebar — hidden on mobile, visible md+ */}
-        <Sidebar user={user} onLogout={onLogout} />
+    <div
+      className="flex min-h-screen transition-colors duration-200"
+      style={{
+        backgroundColor: "var(--bg-surface)",
+        color: "var(--text-primary)",
+      }}
+    >
+      {/* Desktop sidebar */}
+      <Sidebar user={user} onLogout={onLogout} />
 
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col min-h-screen min-w-0">
-          {/* Mobile top bar + bottom tabs */}
-          <Navbar user={user} streak={streak} onLogout={onLogout} />
+      {/* Main content column */}
+      <div className="flex flex-col flex-1 min-w-0 min-h-screen">
+        {/* Mobile navbar (top bar + drawer + bottom tabs) */}
+        <Navbar user={user} onLogout={onLogout} />
 
-          {/* Page content */}
-          <main className="flex-1 px-4 py-6 md:px-6 md:py-8 lg:px-8 overflow-auto pb-20 md:pb-8">
-            {children}
-          </main>
-        </div>
+        {/* Page content */}
+        <main
+          className="flex-1 overflow-auto
+            px-4 py-6
+            md:px-6 md:py-8
+            lg:px-8
+            /* Extra bottom padding on mobile to clear the tab bar */
+            pb-24 md:pb-8"
+        >
+          {children}
+        </main>
       </div>
 
       {/* Toast notifications */}

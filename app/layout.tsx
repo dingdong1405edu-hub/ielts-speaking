@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { SessionProvider } from 'next-auth/react'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
 // ---------------------------------------------------------------------------
 // Font
@@ -81,10 +82,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#0B1120] text-slate-100 selection:bg-blue-500/30 selection:text-blue-100">
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+      <body className="min-h-full flex flex-col transition-colors duration-200">
+        <ThemeProvider>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

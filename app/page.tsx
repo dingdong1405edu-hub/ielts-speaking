@@ -2,35 +2,35 @@
 
 import { useRef } from 'react'
 import Link from 'next/link'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, type Variants } from 'framer-motion'
 import {
   Mic,
   Zap,
   MessageSquare,
-  Trophy,
+  TrendingUp,
   ArrowRight,
-  Star,
   CheckCircle,
   Users,
   BookOpen,
-  TrendingUp,
   Play,
+  Star,
+  ChevronRight,
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
-// Animation helpers
+// Animation variants
 // ---------------------------------------------------------------------------
-const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0 },
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
 }
 
-const stagger = {
+const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 }
 
-function Section({ children, className = '', id }: { children: React.ReactNode; className?: string; id?: string }) {
+function InView({ children, className = '', id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   return (
@@ -48,121 +48,41 @@ function Section({ children, className = '', id }: { children: React.ReactNode; 
 }
 
 // ---------------------------------------------------------------------------
-// Data
-// ---------------------------------------------------------------------------
-const features = [
-  {
-    icon: Zap,
-    title: 'AI-Powered Grading',
-    description:
-      'Get instant band scores across all four IELTS criteria — Fluency, Lexical Resource, Grammar, and Pronunciation — powered by state-of-the-art AI.',
-    gradient: 'from-amber-500 to-orange-500',
-    glow: 'shadow-amber-500/20',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Real-time Feedback',
-    description:
-      'Speak your answer and receive detailed, actionable feedback within seconds. Identify weaknesses and improve faster than any textbook can offer.',
-    gradient: 'from-indigo-500 to-blue-500',
-    glow: 'shadow-indigo-500/20',
-  },
-  {
-    icon: Trophy,
-    title: 'Gamified Learning',
-    description:
-      'Earn XP, maintain streaks, and climb leaderboards with our Duolingo-style learning path designed specifically for IELTS Speaking.',
-    gradient: 'from-violet-500 to-purple-500',
-    glow: 'shadow-violet-500/20',
-  },
-]
-
-const steps = [
-  {
-    step: '01',
-    icon: Mic,
-    title: 'Record Your Answer',
-    description: 'Choose a topic, read the prompt, and record your spoken response — just like the real exam.',
-  },
-  {
-    step: '02',
-    icon: Zap,
-    title: 'AI Analyses Your Speech',
-    description: 'Our AI transcribes and evaluates your answer against official IELTS band descriptors.',
-  },
-  {
-    step: '03',
-    icon: TrendingUp,
-    title: 'Improve with Feedback',
-    description: 'Review detailed feedback, model answers, and vocabulary suggestions to level up your score.',
-  },
-]
-
-const stats = [
-  { value: '10,000+', label: 'Active learners', icon: Users },
-  { value: '4M+', label: 'Questions answered', icon: BookOpen },
-  { value: '+1.5', label: 'Avg band improvement', icon: TrendingUp },
-]
-
-const testimonials = [
-  {
-    name: 'Aisha Rahman',
-    role: 'Scored Band 8.0',
-    country: 'Bangladesh',
-    avatar: 'AR',
-    quote:
-      'I was stuck at 6.5 for two attempts. After 6 weeks with IELTS Speaking AI, I finally hit 8.0. The feedback is incredibly specific — nothing like what I got from YouTube videos.',
-  },
-  {
-    name: 'Dmitri Volkov',
-    role: 'Scored Band 7.5',
-    country: 'Russia',
-    avatar: 'DV',
-    quote:
-      'The streak system kept me practising every single day. My fluency improved dramatically. Worth every penny of the Pro plan.',
-  },
-  {
-    name: 'Mei-Ling Chen',
-    role: 'Scored Band 7.0',
-    country: 'China',
-    avatar: 'MC',
-    quote:
-      "I used to freeze when speaking. The beginner lessons helped me build confidence step by step. Now I don't fear Part 2 at all!",
-  },
-]
-
-// ---------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------
 function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-[#0a0a1a]/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#0B1120]/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-500/30">
             <Mic className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold text-white">IELTS Speaking AI</span>
+          <span className="text-sm font-bold text-white md:text-base">IELTS Speaking AI</span>
         </Link>
 
+        {/* Nav */}
         <nav className="hidden items-center gap-6 text-sm text-slate-400 md:flex">
-          <Link href="#features" className="transition hover:text-white">Features</Link>
-          <Link href="#how-it-works" className="transition hover:text-white">How it works</Link>
-          <Link href="/pricing" className="transition hover:text-white">Pricing</Link>
+          <Link href="#features" className="transition-colors hover:text-white">Tính năng</Link>
+          <Link href="#how-it-works" className="transition-colors hover:text-white">Cách hoạt động</Link>
+          <Link href="/pricing" className="transition-colors hover:text-white">Bảng giá</Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Auth buttons */}
+        <div className="flex items-center gap-2">
           <Link
             href="/login"
-            className="hidden rounded-lg px-4 py-2 text-sm font-medium text-slate-300 transition hover:text-white md:block"
+            className="hidden rounded-lg px-3.5 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-white md:block"
           >
-            Log in
+            Đăng nhập
           </Link>
           <Link
             href="/register"
-            className="rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:from-indigo-500 hover:to-violet-500"
+            className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-500"
           >
-            Get started free
+            Bắt đầu miễn phí
+            <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>
@@ -171,335 +91,512 @@ function Header() {
 }
 
 // ---------------------------------------------------------------------------
-// Main page
+// Hero mockup card
+// ---------------------------------------------------------------------------
+function MockupCard() {
+  return (
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      className="relative mx-auto w-full max-w-sm rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl"
+    >
+      {/* Top bar */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+          <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
+          <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
+        </div>
+        <span className="rounded-full bg-blue-500/20 px-2.5 py-0.5 text-xs font-medium text-blue-400">
+          IELTS Part 2
+        </span>
+      </div>
+
+      {/* Question */}
+      <div className="mb-4 rounded-xl bg-white/5 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Câu hỏi</p>
+        <p className="text-sm text-slate-200 leading-relaxed">
+          Describe a place you have visited that you found particularly interesting.
+        </p>
+      </div>
+
+      {/* Waveform */}
+      <div className="mb-4 flex items-center justify-center gap-1 h-10">
+        {[4, 7, 5, 9, 6, 8, 4, 10, 7, 5, 9, 6, 8, 4, 7].map((h, i) => (
+          <div
+            key={i}
+            className="w-1.5 rounded-full bg-blue-500 animate-waveform"
+            style={{ height: `${h * 4}px`, animationDelay: `${i * 0.08}s` }}
+          />
+        ))}
+      </div>
+
+      {/* Scores */}
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { label: 'Fluency', score: '7.5', color: 'text-emerald-400' },
+          { label: 'Vocabulary', score: '7.0', color: 'text-blue-400' },
+          { label: 'Grammar', score: '6.5', color: 'text-violet-400' },
+          { label: 'Overall', score: '7.0', color: 'text-amber-400' },
+        ].map(({ label, score, color }) => (
+          <div key={label} className="rounded-lg bg-white/5 px-3 py-2">
+            <p className="text-xs text-slate-500">{label}</p>
+            <p className={`text-lg font-bold ${color}`}>{score}</p>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Data
+// ---------------------------------------------------------------------------
+const stats = [
+  { value: '10,000+', label: 'Học viên đang luyện tập', icon: Users },
+  { value: '500,000+', label: 'Câu trả lời đã phân tích', icon: BookOpen },
+  { value: '+1.5 band', label: 'Cải thiện trung bình', icon: TrendingUp },
+]
+
+const features = [
+  {
+    icon: Zap,
+    title: 'AI chấm điểm nghiêm khắc',
+    description:
+      'Điểm band score theo đúng 4 tiêu chí IELTS thật: Fluency, Vocabulary, Grammar và Pronunciation. Không nể nang, không làm đẹp.',
+    color: 'from-amber-500 to-orange-500',
+    bg: 'bg-amber-500/10',
+    ring: 'ring-amber-500/20',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Phản hồi tức thì',
+    description:
+      'Nói xong là có nhận xét chi tiết ngay — fluency, từ vựng, ngữ pháp, phát âm. Biết lỗi sai và biết cách sửa ngay lập tức.',
+    color: 'from-blue-500 to-cyan-500',
+    bg: 'bg-blue-500/10',
+    ring: 'ring-blue-500/20',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Luyện tập có hệ thống',
+    description:
+      'Lộ trình từng bước rõ ràng như Duolingo — từ beginner đến band 8. Streak hàng ngày, XP điểm thưởng, theo dõi tiến độ.',
+    color: 'from-violet-500 to-purple-500',
+    bg: 'bg-violet-500/10',
+    ring: 'ring-violet-500/20',
+  },
+]
+
+const steps = [
+  {
+    n: '01',
+    icon: BookOpen,
+    title: 'Chọn chủ đề & part',
+    desc: 'Chọn Part 1, 2 hoặc 3. Hệ thống tự gợi ý chủ đề phù hợp trình độ của bạn.',
+  },
+  {
+    n: '02',
+    icon: Mic,
+    title: 'Nói và ghi âm',
+    desc: 'Đọc câu hỏi, chuẩn bị 1 phút rồi nói. Giao diện đơn giản như phòng thi thật.',
+  },
+  {
+    n: '03',
+    icon: Star,
+    title: 'Nhận điểm + phản hồi AI',
+    desc: 'AI phân tích giọng nói, cho điểm theo từng tiêu chí và gợi ý câu trả lời mẫu.',
+  },
+]
+
+const pricingTeaser = [
+  {
+    name: 'Miễn phí',
+    price: '0 ₫',
+    desc: '25 lần luyện tập',
+    color: 'border-white/10',
+    cta: 'Bắt đầu ngay',
+    href: '/register',
+    ctaClass: 'border border-white/20 bg-white/5 text-white hover:bg-white/10',
+    popular: false,
+  },
+  {
+    name: '1 tháng',
+    price: '100,000 ₫',
+    desc: 'Luyện tập không giới hạn',
+    color: 'border-blue-500/50',
+    cta: 'Đăng ký ngay',
+    href: '/upgrade?plan=1m',
+    ctaClass: 'bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-600/30',
+    popular: false,
+  },
+  {
+    name: '2 tháng',
+    price: '180,000 ₫',
+    desc: 'Tiết kiệm 20,000 ₫',
+    color: 'border-emerald-500/40',
+    cta: 'Đăng ký ngay',
+    href: '/upgrade?plan=2m',
+    ctaClass: 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-lg shadow-emerald-600/30',
+    popular: true,
+  },
+]
+
+// ---------------------------------------------------------------------------
+// Page
 // ---------------------------------------------------------------------------
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-white">
+    <div className="min-h-screen bg-[#0B1120] text-white">
       <Header />
 
-      {/* ------------------------------------------------------------------ */}
-      {/* HERO                                                                 */}
-      {/* ------------------------------------------------------------------ */}
+      {/* ================================================================ */}
+      {/* HERO                                                              */}
+      {/* ================================================================ */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
-        {/* Background effects */}
+        {/* Gradient orbs */}
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30"
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 60%)' }}
+            className="absolute left-1/4 top-1/4 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20"
+            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 65%)' }}
           />
           <div
-            className="absolute bottom-0 right-0 h-[600px] w-[600px] translate-x-1/4 translate-y-1/4 rounded-full opacity-20"
-            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 60%)' }}
+            className="absolute right-1/4 bottom-1/4 h-[500px] w-[500px] translate-x-1/2 translate-y-1/2 rounded-full opacity-15"
+            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 65%)' }}
           />
+          {/* Mesh grid */}
           <div
-            className="absolute inset-0 opacity-[0.02]"
+            className="absolute inset-0 opacity-[0.025]"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
-              backgroundSize: '50px 50px',
+              backgroundSize: '48px 48px',
             }}
           />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300"
-          >
-            <Star className="h-3.5 w-3.5 fill-current" />
-            Trusted by 10,000+ IELTS candidates
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl font-extrabold leading-tight tracking-tight md:text-7xl"
-          >
-            Master{' '}
-            <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-              IELTS Speaking
-            </span>
-            <br />
-            with AI
-          </motion.h1>
-
-          {/* Subheadline */}
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-400 md:text-xl"
-          >
-            Practice real IELTS Speaking questions, get instant AI band scores, and unlock
-            personalised feedback — all in one gamified platform that adapts to your level.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          >
-            <Link
-              href="/register"
-              className="group flex h-14 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-8 text-base font-semibold text-white shadow-xl shadow-indigo-500/30 transition hover:from-indigo-500 hover:to-violet-500"
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-5 py-20 md:grid-cols-2 md:px-8 md:py-0">
+          {/* Left: text */}
+          <div>
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-300"
             >
-              Start for free
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="/pricing"
-              className="flex h-14 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 text-base font-semibold text-white backdrop-blur transition hover:bg-white/10"
-            >
-              <Play className="h-4 w-4" />
-              View pricing
-            </Link>
-          </motion.div>
+              <Star className="h-3.5 w-3.5 fill-current" />
+              Tin dùng bởi 10,000+ học viên IELTS
+            </motion.div>
 
-          {/* Social proof avatars */}
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-5xl lg:text-6xl"
+            >
+              Nói tiếng Anh{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
+                tự tin hơn
+              </span>
+              <br />
+              cùng{' '}
+              <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+                AI
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-5 text-base leading-relaxed text-slate-400 sm:text-lg"
+            >
+              Luyện tập Speaking IELTS với AI chấm điểm theo chuẩn thật. Nhận phản hồi tức thì,
+              cải thiện từng tiêu chí và tự tin bước vào phòng thi.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-8 flex flex-col gap-3 sm:flex-row"
+            >
+              <Link
+                href="/register"
+                className="group flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
+              >
+                Bắt đầu miễn phí
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-base font-semibold text-white backdrop-blur transition hover:bg-white/10"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                Xem các gói
+              </Link>
+            </motion.div>
+
+            {/* Mini social proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.55 }}
+              className="mt-8 flex items-center gap-3"
+            >
+              <div className="flex -space-x-2">
+                {['NT', 'LM', 'PH', 'BT', 'VN'].map((init, i) => (
+                  <div
+                    key={init}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#0B1120] text-xs font-bold"
+                    style={{ background: `hsl(${(i * 55 + 200) % 360}, 65%, 50%)` }}
+                  >
+                    {init}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-slate-400">
+                <span className="font-semibold text-white">3,500+</span> học viên luyện tập tuần này
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Right: mockup */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="mt-12 flex items-center justify-center gap-3"
+            initial={{ opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.35 }}
+            className="hidden md:block"
           >
-            <div className="flex -space-x-2">
-              {['AR', 'DV', 'MC', 'JK', 'TP'].map((initials, i) => (
-                <div
-                  key={initials}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#0a0a1a] text-xs font-bold"
-                  style={{
-                    background: `hsl(${(i * 60 + 240) % 360}, 70%, 55%)`,
-                  }}
-                >
-                  {initials}
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-slate-400">
-              <span className="font-semibold text-white">4,000+</span> students practised this week
-            </p>
+            <MockupCard />
           </motion.div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* STATS BAR                                                            */}
-      {/* ------------------------------------------------------------------ */}
-      <Section className="border-y border-white/[0.06] bg-white/[0.02] py-14">
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 px-6 sm:grid-cols-3">
+      {/* ================================================================ */}
+      {/* STATS BAR                                                         */}
+      {/* ================================================================ */}
+      <InView className="border-y border-white/[0.07] bg-white/[0.02] py-12">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 sm:grid-cols-3 md:px-8">
           {stats.map(({ value, label, icon: Icon }) => (
             <motion.div
               key={label}
               variants={fadeUp}
-              className="flex flex-col items-center gap-2 text-center"
+              className="flex flex-col items-center gap-3 text-center"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10">
-                <Icon className="h-6 w-6 text-indigo-400" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                <Icon className="h-6 w-6 text-blue-400" />
               </div>
-              <p className="text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+              <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 {value}
               </p>
               <p className="text-sm text-slate-400">{label}</p>
             </motion.div>
           ))}
         </div>
-      </Section>
+      </InView>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* FEATURES                                                             */}
-      {/* ------------------------------------------------------------------ */}
-      <Section id="features" className="py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div variants={fadeUp} className="mb-16 text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-400">
-              Features
+      {/* ================================================================ */}
+      {/* FEATURES                                                          */}
+      {/* ================================================================ */}
+      <InView id="features" className="py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <motion.div variants={fadeUp} className="mb-14 text-center">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-blue-400">
+              Tính năng
             </p>
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-              Everything you need to{' '}
-              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                ace the exam
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+              Tất cả những gì bạn cần để{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                đạt band mục tiêu
               </span>
             </h2>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {features.map(({ icon: Icon, title, description, gradient, glow }) => (
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            {features.map(({ icon: Icon, title, description, color, bg, ring }) => (
               <motion.div
                 key={title}
                 variants={fadeUp}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`group rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl ${glow} backdrop-blur transition-shadow hover:shadow-2xl`}
+                className={`rounded-2xl border border-white/10 bg-white/[0.04] p-7 ring-1 ${ring} backdrop-blur transition-all hover:bg-white/[0.07]`}
               >
-                <div
-                  className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}
-                >
+                <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${color}`}>
                   <Icon className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold">{title}</h3>
-                <p className="leading-relaxed text-slate-400">{description}</p>
+                <h3 className="mb-2.5 text-lg font-bold">{title}</h3>
+                <p className="text-sm leading-relaxed text-slate-400">{description}</p>
               </motion.div>
             ))}
           </div>
         </div>
-      </Section>
+      </InView>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* HOW IT WORKS                                                         */}
-      {/* ------------------------------------------------------------------ */}
-      <Section id="how-it-works" className="py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div variants={fadeUp} className="mb-16 text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-violet-400">
-              How it works
+      {/* ================================================================ */}
+      {/* HOW IT WORKS                                                      */}
+      {/* ================================================================ */}
+      <InView id="how-it-works" className="py-24 bg-white/[0.015]">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <motion.div variants={fadeUp} className="mb-14 text-center">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-violet-400">
+              Cách hoạt động
             </p>
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-              From practice to{' '}
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+              3 bước đơn giản để{' '}
               <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
-                band score
-              </span>{' '}
-              in minutes
-            </h2>
-          </motion.div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {steps.map(({ step, icon: Icon, title, description }) => (
-              <motion.div key={step} variants={fadeUp} className="relative flex flex-col items-start gap-4">
-                {/* Connector line (md+) */}
-                <div className="relative">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
-                    <Icon className="h-7 w-7 text-violet-400" />
-                  </div>
-                  <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-xs font-bold">
-                    {step}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-xl font-bold">{title}</h3>
-                  <p className="leading-relaxed text-slate-400">{description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* TESTIMONIALS                                                         */}
-      {/* ------------------------------------------------------------------ */}
-      <Section className="py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <motion.div variants={fadeUp} className="mb-16 text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-400">
-              Success stories
-            </p>
-            <h2 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-              Real results from{' '}
-              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                real students
+                cải thiện Speaking
               </span>
             </h2>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map(({ name, role, country, avatar, quote }) => (
-              <motion.div
-                key={name}
-                variants={fadeUp}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur"
-              >
-                {/* Stars */}
-                <div className="mb-5 flex gap-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  ))}
+          <div className="relative grid gap-10 md:grid-cols-3">
+            {/* Connector lines on desktop */}
+            <div className="pointer-events-none absolute top-8 left-1/3 right-1/3 hidden h-px bg-gradient-to-r from-blue-500/30 via-violet-500/30 to-purple-500/30 md:block" />
+
+            {steps.map(({ n, icon: Icon, title, desc }) => (
+              <motion.div key={n} variants={fadeUp} className="flex flex-col items-start gap-4">
+                <div className="relative">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur">
+                    <Icon className="h-7 w-7 text-blue-400" />
+                  </div>
+                  <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-bold text-white">
+                    {n}
+                  </span>
                 </div>
-                <p className="mb-6 leading-relaxed text-slate-300">&ldquo;{quote}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold">
-                    {avatar}
-                  </div>
-                  <div>
-                    <p className="font-semibold">{name}</p>
-                    <p className="text-xs text-slate-400">
-                      {role} &bull; {country}
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="mb-2 text-lg font-bold">{title}</h3>
+                  <p className="text-sm leading-relaxed text-slate-400">{desc}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
-      </Section>
+      </InView>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* CTA                                                                  */}
-      {/* ------------------------------------------------------------------ */}
-      <Section className="py-24">
-        <div className="mx-auto max-w-3xl px-6 text-center">
+      {/* ================================================================ */}
+      {/* PRICING TEASER                                                    */}
+      {/* ================================================================ */}
+      <InView className="py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <motion.div variants={fadeUp} className="mb-14 text-center">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-emerald-400">
+              Bảng giá
+            </p>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+              Giá rõ ràng,{' '}
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                không phí ẩn
+              </span>
+            </h2>
+            <p className="mt-4 text-slate-400">Thanh toán chuyển khoản ngân hàng, kích hoạt trong 24 giờ</p>
+          </motion.div>
+
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            {pricingTeaser.map(({ name, price, desc, color, cta, href, ctaClass, popular }) => (
+              <motion.div
+                key={name}
+                variants={fadeUp}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className={`relative flex flex-col rounded-2xl border ${color} bg-white/[0.04] p-7 backdrop-blur transition-all hover:bg-white/[0.07]`}
+              >
+                {popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3.5 py-1 text-xs font-bold text-white shadow-lg">
+                      <Star className="h-3 w-3 fill-current" />
+                      Phổ biến nhất
+                    </span>
+                  </div>
+                )}
+                <p className="mb-1 text-sm font-semibold text-slate-400">{name}</p>
+                <p className="mb-1 text-3xl font-extrabold">{price}</p>
+                <p className="mb-6 text-sm text-emerald-400">{desc}</p>
+                <ul className="mb-6 flex flex-col gap-2">
+                  {['Luyện tập không giới hạn', 'AI chấm điểm 4 tiêu chí', 'Phản hồi chi tiết tức thì'].map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-slate-300">
+                      <CheckCircle className="h-4 w-4 flex-shrink-0 text-emerald-400" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={href}
+                  className={`mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${ctaClass}`}
+                >
+                  {cta}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div variants={fadeUp} className="mt-8 text-center">
+            <Link href="/pricing" className="text-sm text-blue-400 transition hover:text-blue-300 underline underline-offset-4">
+              Xem đầy đủ tính năng từng gói →
+            </Link>
+          </motion.div>
+        </div>
+      </InView>
+
+      {/* ================================================================ */}
+      {/* BOTTOM CTA                                                        */}
+      {/* ================================================================ */}
+      <InView className="py-24">
+        <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <motion.div
             variants={fadeUp}
-            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-900/60 via-violet-900/60 to-purple-900/60 p-12 backdrop-blur-xl"
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-950/60 via-violet-950/60 to-slate-900/60 p-10 backdrop-blur-xl sm:p-14"
           >
-            {/* Glow */}
-            <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-40"
-              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(139,92,246,0.4) 0%, transparent 60%)' }}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-3xl opacity-50"
+              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(59,130,246,0.3) 0%, transparent 65%)' }}
             />
-            <motion.div variants={fadeUp}>
-              <h2 className="mb-4 text-4xl font-extrabold tracking-tight md:text-5xl">
-                Ready to crack{' '}
-                <span className="bg-gradient-to-r from-indigo-300 to-violet-300 bg-clip-text text-transparent">
-                  Band 7+?
-                </span>
-              </h2>
-              <p className="mx-auto mb-8 max-w-xl text-lg text-slate-300">
-                Join thousands of test-takers who improved their speaking band score with our
-                AI-powered platform. Start free — no credit card required.
-              </p>
-              <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link
-                  href="/register"
-                  className="group flex h-14 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-8 text-base font-semibold text-white shadow-xl shadow-indigo-500/30 transition hover:from-indigo-400 hover:to-violet-400"
-                >
-                  Start practising free
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="flex h-14 items-center gap-2 rounded-xl border border-white/20 px-8 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
-                >
-                  See pricing
-                </Link>
-              </div>
+            <motion.h2 variants={fadeUp} className="relative mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Sẵn sàng tăng{' '}
+              <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
+                band score?
+              </span>
+            </motion.h2>
+            <motion.p variants={fadeUp} className="relative mx-auto mb-8 max-w-lg text-slate-300">
+              Bắt đầu miễn phí với 25 lần luyện tập. Không cần thẻ tín dụng, không phí ẩn.
+            </motion.p>
+            <motion.div variants={fadeUp} className="relative flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href="/register"
+                className="group flex h-13 items-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500"
+              >
+                Bắt đầu luyện tập ngay
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="flex h-13 items-center gap-2 rounded-xl border border-white/20 px-8 py-3.5 text-base font-semibold text-white transition hover:border-white/40 hover:bg-white/5"
+              >
+                Xem bảng giá
+              </Link>
             </motion.div>
           </motion.div>
         </div>
-      </Section>
+      </InView>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* FOOTER                                                               */}
-      {/* ------------------------------------------------------------------ */}
+      {/* ================================================================ */}
+      {/* FOOTER                                                            */}
+      {/* ================================================================ */}
       <footer className="border-t border-white/[0.06] py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-slate-500 sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 text-sm text-slate-500 sm:flex-row md:px-8">
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-indigo-500 to-violet-600">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-blue-700">
               <Mic className="h-3.5 w-3.5 text-white" />
             </div>
             <span className="font-semibold text-slate-300">IELTS Speaking AI</span>
           </div>
           <p>&copy; {new Date().getFullYear()} IELTS Speaking AI. All rights reserved.</p>
           <div className="flex gap-5">
-            <Link href="/pricing" className="transition hover:text-slate-300">Pricing</Link>
-            <Link href="/login" className="transition hover:text-slate-300">Login</Link>
-            <Link href="/register" className="transition hover:text-slate-300">Register</Link>
+            <Link href="/pricing" className="transition hover:text-slate-300">Bảng giá</Link>
+            <Link href="/login" className="transition hover:text-slate-300">Đăng nhập</Link>
+            <Link href="/register" className="transition hover:text-slate-300">Đăng ký</Link>
           </div>
         </div>
       </footer>

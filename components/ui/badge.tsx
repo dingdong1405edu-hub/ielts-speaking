@@ -4,26 +4,43 @@ import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
   [
-    "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium",
+    // Base layout
+    "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5",
+    "text-xs font-medium leading-none",
+    // Smooth color transitions
     "transition-colors duration-150",
   ],
   {
     variants: {
       variant: {
+        // Blue — default brand color
         default: [
-          "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white",
+          "bg-blue-100 text-blue-700",
+          "dark:bg-blue-900/40 dark:text-blue-300",
         ],
+        // Emerald — success / good score
         success: [
-          "bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30",
+          "bg-emerald-100 text-emerald-700",
+          "dark:bg-emerald-900/40 dark:text-emerald-300",
         ],
+        // Amber — caution / warning
         warning: [
-          "bg-amber-500/20 text-amber-400 border border-amber-500/30",
+          "bg-amber-100 text-amber-700",
+          "dark:bg-amber-900/40 dark:text-amber-300",
         ],
+        // Red — error / danger
         danger: [
-          "bg-red-500/20 text-red-400 border border-red-500/30",
+          "bg-red-100 text-red-700",
+          "dark:bg-red-900/40 dark:text-red-300",
         ],
+        // Border only — neutral / secondary
         outline: [
-          "border border-slate-600 text-slate-300 bg-transparent",
+          "border border-[var(--border-strong)] text-[var(--text-secondary)] bg-transparent",
+        ],
+        // Gradient — premium / special feature
+        premium: [
+          "bg-gradient-to-r from-amber-500 to-orange-500 text-white",
+          "shadow-sm",
         ],
       },
     },

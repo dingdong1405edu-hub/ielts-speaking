@@ -3,7 +3,10 @@
 import { signIn } from '@/lib/auth'
 import { AuthError } from 'next-auth'
 
-export async function signInAction(email: string, password: string) {
+export async function signInAction(formData: FormData) {
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+
   try {
     await signIn('credentials', {
       email,
@@ -14,12 +17,12 @@ export async function signInAction(email: string, password: string) {
     if (err instanceof AuthError) {
       switch (err.type) {
         case 'CredentialsSignin':
-          return { error: 'Invalid email or password.' }
+          return { error: 'Email hoặc mật khẩu không đúng.' }
         default:
-          return { error: 'Something went wrong. Please try again.' }
+          return { error: 'Đã có lỗi xảy ra. Vui lòng thử lại.' }
       }
     }
-    // signIn throws a redirect — re-throw so Next.js handles it
+    // signIn throws a NEXT_REDIRECT on success — re-throw so Next.js handles it
     throw err
   }
 }

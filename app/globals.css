@@ -1,59 +1,184 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   CSS custom properties — dark theme
+   Tailwind v4 theme tokens
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Brand — blue */
+  --color-primary-50:  #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  /* Accent — emerald */
+  --color-accent-400: #34d399;
+  --color-accent-500: #10b981;
+  --color-accent-600: #059669;
+
+  /* Font stack */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Named animations */
+  --animate-fade-up:    fade-up 0.4s ease forwards;
+  --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer:    shimmer 1.5s infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   Keyframe definitions
+--------------------------------------------------------------------------- */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 1; transform: scale(1);    }
+  50%       { opacity: 0.5; transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(1);   }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes bounce-dot {
+  0%, 80%, 100% { transform: scale(0); }
+  40%            { transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* ---------------------------------------------------------------------------
+   Light-mode CSS variables (default)
 --------------------------------------------------------------------------- */
 
 :root {
-  /* Base surfaces */
-  --background:        #0B1120;
-  --background-subtle: #0F1629;
-  --surface:           #111827;
-  --surface-raised:    #1E293B;
-  --surface-overlay:   #1a2740;
+  --bg-base:        #ffffff;
+  --bg-surface:     #f8fafc;
+  --bg-card:        #ffffff;
+  --bg-card-hover:  #f1f5f9;
+  --bg-input:       #f8fafc;
 
-  /* Text hierarchy */
-  --foreground:        #F1F5F9;
-  --foreground-muted:  #94A3B8;
-  --foreground-subtle: #475569;
+  --border:         #e2e8f0;
+  --border-strong:  #cbd5e1;
 
-  /* Brand colors */
-  --primary:           #3B82F6;
-  --primary-hover:     #2563EB;
-  --primary-subtle:    rgba(59, 130, 246, 0.12);
-  --primary-border:    rgba(59, 130, 246, 0.25);
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
 
-  --accent:            #10B981;
-  --accent-hover:      #059669;
-  --accent-subtle:     rgba(16, 185, 129, 0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
 
-  /* Status colors */
-  --success:   #10B981;
-  --warning:   #F59E0B;
-  --error:     #EF4444;
-  --info:      #3B82F6;
+  /* Sidebar is always dark navy, regardless of page theme */
+  --sidebar-bg:          #0f172a;
+  --sidebar-text:        #e2e8f0;
+  --sidebar-muted:       #64748b;
+  --sidebar-active:      rgba(59, 130, 246, 0.15);
+  --sidebar-active-text: #60a5fa;
 
-  /* Borders */
-  --border:          rgba(255, 255, 255, 0.08);
-  --border-strong:   rgba(255, 255, 255, 0.16);
-
-  /* Radius */
+  /* Legacy aliases (kept for existing components) */
+  --background:         #ffffff;
+  --background-subtle:  #f8fafc;
+  --surface:            #f1f5f9;
+  --surface-raised:     #e2e8f0;
+  --foreground:         #0f172a;
+  --foreground-muted:   #475569;
+  --foreground-subtle:  #94a3b8;
+  --primary:            #3b82f6;
+  --primary-hover:      #2563eb;
+  --primary-subtle:     rgba(59, 130, 246, 0.10);
+  --primary-border:     rgba(59, 130, 246, 0.25);
+  --accent:             #10b981;
+  --accent-hover:       #059669;
+  --accent-subtle:      rgba(16, 185, 129, 0.10);
+  --success:   #10b981;
+  --warning:   #f59e0b;
+  --error:     #ef4444;
+  --info:      #3b82f6;
   --radius-sm:  6px;
   --radius-md:  10px;
   --radius-lg:  14px;
   --radius-xl:  18px;
   --radius-2xl: 24px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px 0 rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-  --shadow-glow-blue:    0 0 24px rgba(59, 130, 246, 0.3);
-  --shadow-glow-emerald: 0 0 24px rgba(16, 185, 129, 0.3);
+  --shadow-glow-blue:    0 0 24px rgba(59, 130, 246, 0.25);
+  --shadow-glow-emerald: 0 0 24px rgba(16, 185, 129, 0.25);
 }
 
 /* ---------------------------------------------------------------------------
-   Base resets & typography
+   Dark-mode CSS variables
+--------------------------------------------------------------------------- */
+
+.dark {
+  --bg-base:        #0b1120;
+  --bg-surface:     #111827;
+  --bg-card:        #1a2235;
+  --bg-card-hover:  #1e2d42;
+  --bg-input:       #1a2235;
+
+  --border:         #1e293b;
+  --border-strong:  #334155;
+
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.50);
+
+  /* Legacy aliases */
+  --background:         #0b1120;
+  --background-subtle:  #0f1629;
+  --surface:            #111827;
+  --surface-raised:     #1e293b;
+  --surface-overlay:    #1a2740;
+  --foreground:         #f1f5f9;
+  --foreground-muted:   #94a3b8;
+  --foreground-subtle:  #475569;
+  --border-legacy:      rgba(255, 255, 255, 0.08);
+  --border-strong-legacy: rgba(255, 255, 255, 0.16);
+  --primary-subtle:     rgba(59, 130, 246, 0.12);
+  --primary-border:     rgba(59, 130, 246, 0.25);
+  --accent-subtle:      rgba(16, 185, 129, 0.12);
+  --shadow-glow-blue:    0 0 24px rgba(59, 130, 246, 0.30);
+  --shadow-glow-emerald: 0 0 24px rgba(16, 185, 129, 0.30);
+}
+
+/* ---------------------------------------------------------------------------
+   Base resets
 --------------------------------------------------------------------------- */
 
 *,
@@ -71,46 +196,48 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   min-height: 100dvh;
-}
-
-/* Smooth theme transitions */
-body,
-body * {
-  transition-property: background-color, border-color, color, opacity;
-  transition-duration: 150ms;
+  transition-property: background-color, color;
+  transition-duration: 200ms;
   transition-timing-function: ease;
 }
 
-/* Disable transitions on elements that handle their own animation */
+/* Smooth theme transitions on common properties */
+body * {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* Elements that manage their own animations should opt out */
 [data-no-transition],
 [data-no-transition] * {
   transition: none !important;
 }
 
 /* ---------------------------------------------------------------------------
-   Custom selection color
+   Selection color
 --------------------------------------------------------------------------- */
 
 ::selection {
-  background-color: rgba(59, 130, 246, 0.3);
-  color: #BFDBFE;
+  background-color: rgba(59, 130, 246, 0.25);
+  color: #bfdbfe;
 }
 
 ::-moz-selection {
-  background-color: rgba(59, 130, 246, 0.3);
-  color: #BFDBFE;
+  background-color: rgba(59, 130, 246, 0.25);
+  color: #bfdbfe;
 }
 
 /* ---------------------------------------------------------------------------
-   Custom scrollbar — dark, slim
+   Scrollbar — slim, theme-aware
 --------------------------------------------------------------------------- */
 
 ::-webkit-scrollbar {
@@ -123,24 +250,21 @@ body * {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--border-strong);
   border-radius: 100px;
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.22);
+  background-color: var(--text-muted);
 }
 
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
 /* ---------------------------------------------------------------------------
@@ -151,77 +275,6 @@ body * {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
-}
-
-/* ---------------------------------------------------------------------------
-   Keyframe animations
---------------------------------------------------------------------------- */
-
-/* Pulsing ring — used around recording button */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.92);
-    opacity: 1;
-  }
-  80%,
-  100% {
-    transform: scale(1.45);
-    opacity: 0;
-  }
-}
-
-/* Audio waveform bar bounce */
-@keyframes waveform {
-  0%, 100% {
-    transform: scaleY(0.3);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
-
-/* Shimmer effect — skeleton loaders */
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-/* Slow spin */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Fade in up */
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Blink cursor */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
-/* Bounce dot loader */
-@keyframes bounce-dot {
-  0%, 80%, 100% { transform: scale(0); }
-  40%           { transform: scale(1); }
 }
 
 /* ---------------------------------------------------------------------------
@@ -239,9 +292,9 @@ body * {
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.10) 50%,
-    rgba(255, 255, 255, 0.04) 75%
+    rgba(128, 128, 128, 0.06) 25%,
+    rgba(128, 128, 128, 0.14) 50%,
+    rgba(128, 128, 128, 0.06) 75%
   );
   background-size: 200% auto;
   animation: shimmer 1.8s linear infinite;
@@ -259,14 +312,18 @@ body * {
   animation: blink 1s step-end infinite;
 }
 
-/* Staggered waveform bars (for decorative use) */
-.waveform-bar:nth-child(1)  { animation-delay: 0.0s; }
-.waveform-bar:nth-child(2)  { animation-delay: 0.1s; }
-.waveform-bar:nth-child(3)  { animation-delay: 0.2s; }
-.waveform-bar:nth-child(4)  { animation-delay: 0.3s; }
-.waveform-bar:nth-child(5)  { animation-delay: 0.4s; }
-.waveform-bar:nth-child(6)  { animation-delay: 0.5s; }
-.waveform-bar:nth-child(7)  { animation-delay: 0.6s; }
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Staggered waveform bars */
+.waveform-bar:nth-child(1) { animation-delay: 0.0s; }
+.waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform-bar:nth-child(4) { animation-delay: 0.3s; }
+.waveform-bar:nth-child(5) { animation-delay: 0.4s; }
+.waveform-bar:nth-child(6) { animation-delay: 0.5s; }
+.waveform-bar:nth-child(7) { animation-delay: 0.6s; }
 
 /* ---------------------------------------------------------------------------
    Skeleton loader
@@ -274,7 +331,7 @@ body * {
 
 .skeleton {
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-card-hover);
   position: relative;
   overflow: hidden;
 }
@@ -286,7 +343,7 @@ body * {
   background: linear-gradient(
     90deg,
     transparent 25%,
-    rgba(255, 255, 255, 0.07) 50%,
+    rgba(128, 128, 128, 0.1) 50%,
     transparent 75%
   );
   background-size: 200% auto;
@@ -301,7 +358,11 @@ body * {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+}
+
+.dark .glass {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* ---------------------------------------------------------------------------
@@ -310,48 +371,45 @@ body * {
 
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
-}
-
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: var(--border-strong);
   border-radius: 100px;
 }
 
 /* ---------------------------------------------------------------------------
-   Prose overrides for dark theme
+   Prose overrides (theme-aware)
 --------------------------------------------------------------------------- */
 
-.prose-dark {
-  color: var(--foreground-muted);
+.prose-themed {
+  color: var(--text-secondary);
 }
 
-.prose-dark strong {
-  color: var(--foreground);
-}
+.prose-themed strong { color: var(--text-primary); }
 
-.prose-dark a {
+.prose-themed a {
   color: var(--primary);
   text-decoration: underline;
   text-decoration-color: rgba(59, 130, 246, 0.4);
   text-underline-offset: 3px;
 }
 
-.prose-dark a:hover {
+.prose-themed a:hover {
   text-decoration-color: var(--primary);
 }
+
+/* Legacy alias */
+.prose-dark { color: var(--foreground-muted); }
+.prose-dark strong { color: var(--foreground); }
+.prose-dark a { color: var(--primary); }
 
 /* ---------------------------------------------------------------------------
    Print reset
 --------------------------------------------------------------------------- */
 
 @media print {
-  body {
-    background: white;
-    color: black;
-  }
+  body { background: white; color: black; }
 }

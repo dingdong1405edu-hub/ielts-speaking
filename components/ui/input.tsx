@@ -1,60 +1,102 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Rendered as a <label> above the input, linked via htmlFor */
   label?: string;
+  /** Displays a red error message below the input and applies error styling */
   error?: string;
-  leftIcon?: React.ReactNode;
+  /** Icon rendered on the left side of the input */
+  icon?: React.ReactNode;
+  /** Icon rendered on the right side of the input */
   rightIcon?: React.ReactNode;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, leftIcon, rightIcon, id, ...props }, ref) => {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
+  (
+    { className, type = "text", label, error, icon, rightIcon, id, ...props },
+    ref
+  ) => {
+    // Derive a stable id from the label when none is provided
+    const inputId =
+      id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+
+    const hasError = Boolean(error);
 
     return (
       <div className="flex flex-col gap-1.5 w-full">
+        {/* Label */}
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-slate-300"
+            className="text-sm font-medium text-[var(--text-primary)]"
           >
             {label}
           </label>
         )}
+
+        {/* Input wrapper */}
         <div className="relative flex items-center">
-          {leftIcon && (
-            <span className="absolute left-3 text-slate-400 pointer-events-none">
-              {leftIcon}
+          {/* Left icon */}
+          {icon && (
+            <span
+              aria-hidden="true"
+              className="absolute left-3 text-[var(--text-muted)] pointer-events-none flex items-center"
+            >
+              {icon}
             </span>
           )}
+
           <input
             id={inputId}
             type={type}
             ref={ref}
+            aria-invalid={hasError}
+            aria-describedby={hasError && inputId ? `${inputId}-error` : undefined}
             className={cn(
-              "w-full rounded-lg border bg-[#0F172A] text-slate-100 placeholder:text-slate-500",
-              "h-10 px-3 text-sm",
-              "border-slate-700",
+              // Base layout
+              "w-full h-10 rounded-lg px-3 text-sm",
+              // Theme-aware colors
+              "bg-[var(--bg-input)] border border-[var(--border)]",
+              "text-[var(--text-primary)] placeholder:text-[var(--text-muted)]",
+              // Transitions
               "transition-all duration-200",
-              "focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6]",
+              // Focus state — clear ring + blue accent border
+              "outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500",
+              // Hover nudge
+              "hover:border-[var(--border-strong)]",
+              // Disabled
               "disabled:cursor-not-allowed disabled:opacity-50",
-              "hover:border-slate-500",
-              error && "border-red-500 focus:ring-red-500 focus:border-red-500",
-              leftIcon && "pl-10",
+              // Error override
+              hasError &&
+                "border-red-500 focus:ring-red-500/50 focus:border-red-500",
+              // Padding adjustments for icons
+              icon && "pl-10",
               rightIcon && "pr-10",
               className
             )}
             {...props}
           />
+
+          {/* Right icon */}
           {rightIcon && (
-            <span className="absolute right-3 text-slate-400 pointer-events-none">
+            <span
+              aria-hidden="true"
+              className="absolute right-3 text-[var(--text-muted)] pointer-events-none flex items-center"
+            >
               {rightIcon}
             </span>
           )}
         </div>
-        {error && (
-          <p className="text-xs text-red-400 flex items-center gap-1">
+
+        {/* Error message */}
+        {hasError && (
+          <p
+            id={inputId ? `${inputId}-error` : undefined}
+            className="text-xs text-red-500 flex items-center gap-1"
+            role="alert"
+          >
             {error}
           </p>
         )}

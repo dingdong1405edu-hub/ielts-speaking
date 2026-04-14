@@ -2,55 +2,69 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium",
+    // Base layout & typography
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap",
+    "rounded-lg font-medium text-sm",
+    // Transitions
     "transition-all duration-200 ease-in-out",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500",
+    // Focus ring
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-surface)]",
+    // Disabled
     "disabled:pointer-events-none disabled:opacity-50",
+    // Press feedback
     "active:scale-[0.97]",
+    // Cursor
+    "cursor-pointer select-none",
   ],
   {
     variants: {
       variant: {
         default: [
-          "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white shadow-md",
-          "hover:from-[#1e40af] hover:to-[#60a5fa] hover:shadow-blue-500/30 hover:shadow-lg",
+          "bg-blue-600 text-white shadow-sm",
+          "hover:bg-blue-700 hover:shadow-md",
           "focus-visible:ring-blue-500",
         ],
         outline: [
-          "border border-[#3B82F6] text-[#3B82F6] bg-transparent",
-          "hover:bg-[#3B82F6]/10 hover:shadow-sm",
-          "dark:border-[#3B82F6] dark:text-[#3B82F6]",
-          "focus-visible:ring-blue-500",
+          "border border-[var(--border-strong)] bg-transparent text-[var(--text-primary)]",
+          "hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]",
+          "focus-visible:ring-[var(--text-secondary)]",
         ],
         ghost: [
-          "bg-transparent text-slate-700 dark:text-slate-300",
-          "hover:bg-slate-100 dark:hover:bg-slate-800",
-          "focus-visible:ring-slate-400",
+          "bg-transparent text-[var(--text-secondary)]",
+          "hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]",
+          "focus-visible:ring-[var(--text-secondary)]",
         ],
         destructive: [
-          "bg-red-600 text-white shadow-md",
-          "hover:bg-red-700 hover:shadow-red-500/30 hover:shadow-lg",
+          "bg-red-600 text-white shadow-sm",
+          "hover:bg-red-700 hover:shadow-md",
           "focus-visible:ring-red-500",
         ],
         success: [
-          "bg-gradient-to-r from-[#059669] to-[#10B981] text-white shadow-md",
-          "hover:from-[#047857] hover:to-[#34d399] hover:shadow-emerald-500/30 hover:shadow-lg",
+          "bg-emerald-600 text-white shadow-sm",
+          "hover:bg-emerald-700 hover:shadow-md",
           "focus-visible:ring-emerald-500",
+        ],
+        premium: [
+          "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm",
+          "hover:from-amber-600 hover:to-orange-600 hover:shadow-md",
+          "focus-visible:ring-amber-500",
         ],
       },
       size: {
         sm: "h-8 px-3 text-xs rounded-md gap-1.5",
-        md: "h-10 px-4 text-sm",
+        default: "h-10 px-4 text-sm",
         lg: "h-12 px-6 text-base",
+        icon: "h-10 w-10 p-0",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "md",
+      size: "default",
     },
   }
 );
@@ -58,17 +72,40 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      isLoading = false,
+      loadingText,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
+        disabled={disabled || isLoading}
         {...props}
-      />
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden="true" />
+            {loadingText ?? children}
+          </>
+        ) : (
+          children
+        )}
+      </button>
     );
   }
 );

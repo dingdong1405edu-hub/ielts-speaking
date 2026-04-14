@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { getUserUsage } from '@/lib/usage'
 
 export async function GET() {
   const session = await auth()
@@ -24,6 +25,7 @@ export async function GET() {
     user,
     totalVocab,
     weekActivity,
+    usage,
   ] = await Promise.all([
     // Total sessions
     prisma.practiceSession.count({
@@ -48,6 +50,8 @@ export async function GET() {
       where: { userId, date: { gte: lastMonday } },
       _sum: { sessions: true },
     }),
+    // Usage data
+    getUserUsage(userId),
   ])
 
   // Compute average and best band score
@@ -55,11 +59,11 @@ export async function GET() {
   let bestBand = 0
 
   const bandScores: number[] = []
-  for (const session of completedSessions) {
-    if (!session.scores) continue
-    const scores = session.scores as Record<string, number>
+  for (const s of completedSessions) {
+    if (!s.scores) continue
+    const scores = s.scores as Record<string, number>
     const values = Object.values(scores).filter(
-      (v) => typeof v === 'number' && !isNaN(v)
+      (v) => typeof v === 'number' && !isNaN(v),
     )
     if (values.length > 0) {
       const avg = values.reduce((a, b) => a + b, 0) / values.length
@@ -70,7 +74,7 @@ export async function GET() {
   if (bandScores.length > 0) {
     avgBand =
       Math.round(
-        (bandScores.reduce((a, b) => a + b, 0) / bandScores.length) * 2
+        (bandScores.reduce((a, b) => a + b, 0) / bandScores.length) * 2,
       ) / 2
     bestBand = Math.round(Math.max(...bandScores) * 2) / 2
   }
@@ -82,5 +86,9 @@ export async function GET() {
     streak: user?.streak ?? 0,
     totalVocab,
     sessionsThisWeek: weekActivity._sum.sessions ?? 0,
+    // Usage fields
+    sessionsUsed: usage.sessionsUsed,
+    remaining: usage.remaining === Infinity ? null : usage.remaining,
+    isPremiumActive: usage.isPremiumActive,
   })
 }

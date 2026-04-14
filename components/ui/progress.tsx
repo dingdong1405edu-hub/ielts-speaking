@@ -1,36 +1,47 @@
 "use client";
 
 import * as React from "react";
-import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
 
-interface ProgressProps
-  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type ProgressVariant = "default" | "success" | "warning";
+
+interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Current value 0–100 */
+  value?: number;
+  /** Color variant for the filled bar */
+  variant?: ProgressVariant;
+  /** Accessible label for screen readers */
   label?: string;
+  /** Show the numeric percentage to the right */
   showValue?: boolean;
-  gradient?: "blue" | "emerald" | "amber" | "custom";
-  indicatorClassName?: string;
 }
 
-const gradientMap = {
-  blue: "from-[#1E3A8A] to-[#3B82F6]",
-  emerald: "from-[#059669] to-[#10B981]",
-  amber: "from-amber-600 to-amber-400",
-  custom: "",
+// ---------------------------------------------------------------------------
+// Variant → Tailwind fill class map
+// ---------------------------------------------------------------------------
+
+const fillVariants: Record<ProgressVariant, string> = {
+  default: "bg-blue-500",
+  success: "bg-emerald-500",
+  warning: "bg-amber-500",
 };
 
-const Progress = React.forwardRef<
-  React.ElementRef<typeof ProgressPrimitive.Root>,
-  ProgressProps
->(
+// ---------------------------------------------------------------------------
+// Progress
+// ---------------------------------------------------------------------------
+
+const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
   (
     {
       className,
       value,
+      variant = "default",
       label,
       showValue = false,
-      gradient = "blue",
-      indicatorClassName,
       ...props
     },
     ref
@@ -38,43 +49,49 @@ const Progress = React.forwardRef<
     const clampedValue = Math.min(100, Math.max(0, value ?? 0));
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
+      <div ref={ref} className={cn("flex flex-col gap-1.5 w-full", className)} {...props}>
+        {/* Optional label + value row */}
         {(label || showValue) && (
           <div className="flex items-center justify-between">
             {label && (
-              <span className="text-sm font-medium text-slate-300">{label}</span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">
+                {label}
+              </span>
             )}
             {showValue && (
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs font-semibold tabular-nums text-[var(--text-muted)]">
                 {Math.round(clampedValue)}%
               </span>
             )}
           </div>
         )}
-        <ProgressPrimitive.Root
-          ref={ref}
-          className={cn(
-            "relative h-2.5 w-full overflow-hidden rounded-full bg-slate-800",
-            className
-          )}
-          value={clampedValue}
-          {...props}
+
+        {/* Track */}
+        <div
+          role="progressbar"
+          aria-valuenow={clampedValue}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={label}
+          className="relative h-2.5 w-full overflow-hidden rounded-full bg-[var(--bg-card)]"
+          style={{ border: "1px solid var(--border)" }}
         >
-          <ProgressPrimitive.Indicator
+          {/* Fill — CSS transition on width for smooth animated mount */}
+          <div
             className={cn(
-              "h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out",
-              "shadow-sm",
-              gradientMap[gradient],
-              indicatorClassName
+              "h-full rounded-full shadow-sm",
+              "transition-[width] duration-700 ease-out",
+              fillVariants[variant]
             )}
             style={{ width: `${clampedValue}%` }}
           />
-        </ProgressPrimitive.Root>
+        </div>
       </div>
     );
   }
 );
 
-Progress.displayName = ProgressPrimitive.Root.displayName;
+Progress.displayName = "Progress";
 
 export { Progress };
+export type { ProgressProps, ProgressVariant };

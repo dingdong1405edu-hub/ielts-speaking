@@ -1,6 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+// ---------------------------------------------------------------------------
+// Card — root container
+// ---------------------------------------------------------------------------
+
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -8,16 +12,26 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-white/10 bg-[#1E293B]/80 backdrop-blur-md",
-      "shadow-xl shadow-black/10",
-      "dark:bg-[#1E293B]/80 dark:border-white/10",
-      "transition-shadow duration-200 hover:shadow-2xl hover:shadow-black/20",
+      // Theme-aware surface
+      "bg-[var(--bg-card)]",
+      // Border using CSS var
+      "border border-[var(--border)]",
+      // Shadow via CSS var (falls back gracefully in light mode)
+      "shadow-[var(--shadow-sm)]",
+      // Shape
+      "rounded-xl",
+      // Smooth color transitions on theme switch
+      "transition-colors duration-200",
       className
     )}
     {...props}
   />
 ));
 Card.displayName = "Card";
+
+// ---------------------------------------------------------------------------
+// CardHeader — top section with vertical spacing
+// ---------------------------------------------------------------------------
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -31,6 +45,10 @@ const CardHeader = React.forwardRef<
 ));
 CardHeader.displayName = "CardHeader";
 
+// ---------------------------------------------------------------------------
+// CardTitle — primary heading inside a card
+// ---------------------------------------------------------------------------
+
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
@@ -38,7 +56,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-snug tracking-tight text-slate-100",
+      "text-lg font-semibold leading-snug tracking-tight text-[var(--text-primary)]",
       className
     )}
     {...props}
@@ -46,17 +64,28 @@ const CardTitle = React.forwardRef<
 ));
 CardTitle.displayName = "CardTitle";
 
+// ---------------------------------------------------------------------------
+// CardDescription — secondary descriptive text
+// ---------------------------------------------------------------------------
+
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-slate-400 leading-relaxed", className)}
+    className={cn(
+      "text-sm leading-relaxed text-[var(--text-secondary)]",
+      className
+    )}
     {...props}
   />
 ));
 CardDescription.displayName = "CardDescription";
+
+// ---------------------------------------------------------------------------
+// CardContent — main body area (no top padding — header owns that)
+// ---------------------------------------------------------------------------
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
@@ -66,19 +95,27 @@ const CardContent = React.forwardRef<
 ));
 CardContent.displayName = "CardContent";
 
+// ---------------------------------------------------------------------------
+// CardFooter — bottom action / meta row
+// ---------------------------------------------------------------------------
+
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "flex items-center p-6 pt-0 gap-3",
-      className
-    )}
+    className={cn("flex items-center gap-3 p-6 pt-0", className)}
     {...props}
   />
 ));
 CardFooter.displayName = "CardFooter";
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+};

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+import { getUserUsage, FREE_LIMIT } from '@/lib/usage'
 
 // ---------------------------------------------------------------------------
 // GET /api/user
-// Returns the current user's profile
+// Returns the current user's profile, including usage data
 // ---------------------------------------------------------------------------
 export async function GET() {
   try {
@@ -13,27 +14,38 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        image: true,
-        plan: true,
-        xp: true,
-        streak: true,
-        lastActiveDate: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    })
+    const [user, usage] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          image: true,
+          plan: true,
+          xp: true,
+          streak: true,
+          lastActiveDate: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+      getUserUsage(session.user.id),
+    ])
 
     if (!user) {
       return NextResponse.json({ error: 'User not found.' }, { status: 404 })
     }
 
-    return NextResponse.json({ user })
+    return NextResponse.json({
+      user: {
+        ...user,
+        sessionsUsed: usage.sessionsUsed,
+        isPremiumActive: usage.isPremiumActive,
+        remaining: usage.remaining === Infinity ? null : usage.remaining,
+        freeLimit: FREE_LIMIT,
+      },
+    })
   } catch (err) {
     console.error('[user GET] error:', err)
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
@@ -60,20 +72,29 @@ export async function PATCH(req: NextRequest) {
 
     if (name !== undefined) {
       if (typeof name !== 'string' || name.trim().length === 0) {
-        return NextResponse.json({ error: 'name must be a non-empty string.' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'name must be a non-empty string.' },
+          { status: 400 },
+        )
       }
       data.name = name.trim()
     }
 
     if (image !== undefined) {
       if (typeof image !== 'string' || image.trim().length === 0) {
-        return NextResponse.json({ error: 'image must be a non-empty string.' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'image must be a non-empty string.' },
+          { status: 400 },
+        )
       }
       // Basic URL validation
       try {
         new URL(image.trim())
       } catch {
-        return NextResponse.json({ error: 'image must be a valid URL.' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'image must be a valid URL.' },
+          { status: 400 },
+        )
       }
       data.image = image.trim()
     }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -12,11 +12,14 @@ import {
   Loader2,
   Settings2,
   Layers,
+  Info,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { UsageLimitModal } from '@/components/practice/UsageLimitModal'
 import { getTopicEmoji } from '@/lib/utils'
+import { FREE_LIMIT } from '@/lib/usage'
 
 // ---------------------------------------------------------------------------
 // Data
@@ -41,26 +44,27 @@ const TOPICS = [
 
 type Part = 'PART1' | 'PART2' | 'PART3'
 
-const PARTS: { id: Part; label: string; description: string; duration: string }[] = [
-  {
-    id: 'PART1',
-    label: 'Part 1',
-    description: 'Short, familiar questions about yourself and everyday topics',
-    duration: '1–2 min each',
-  },
-  {
-    id: 'PART2',
-    label: 'Part 2',
-    description: 'Long-turn cue card — speak for 1–2 minutes on a topic',
-    duration: '1–2 min',
-  },
-  {
-    id: 'PART3',
-    label: 'Part 3',
-    description: 'Abstract discussion questions linked to the Part 2 topic',
-    duration: '2–3 min each',
-  },
-]
+const PARTS: { id: Part; label: string; description: string; duration: string }[] =
+  [
+    {
+      id: 'PART1',
+      label: 'Part 1',
+      description: 'Câu hỏi ngắn về bản thân và các chủ đề quen thuộc',
+      duration: '1–2 phút/câu',
+    },
+    {
+      id: 'PART2',
+      label: 'Part 2',
+      description: 'Thẻ gợi ý — nói liên tục 1–2 phút về một chủ đề',
+      duration: '1–2 phút',
+    },
+    {
+      id: 'PART3',
+      label: 'Part 3',
+      description: 'Câu hỏi thảo luận trừu tượng liên quan đến chủ đề Part 2',
+      duration: '2–3 phút/câu',
+    },
+  ]
 
 const QUESTION_COUNTS = [3, 5, 7, 10]
 
@@ -72,17 +76,72 @@ function StepBadge({ n, label, done }: { n: number; label: string; done: boolean
   return (
     <div className="flex items-center gap-3">
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors duration-200"
+        style={
           done
-            ? 'bg-blue-500 text-white'
-            : 'bg-white/10 text-slate-400 border border-white/10'
-        }`}
+            ? { background: '#3b82f6', color: '#fff' }
+            : {
+                background: 'var(--bg-card)',
+                color: 'var(--text-muted)',
+                border: '1px solid var(--border)',
+              }
+        }
       >
         {n}
       </div>
-      <span className={`text-sm font-medium ${done ? 'text-slate-200' : 'text-slate-500'}`}>
+      <span
+        className="text-sm font-medium"
+        style={{ color: done ? 'var(--text-primary)' : 'var(--text-muted)' }}
+      >
         {label}
       </span>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Usage note
+// ---------------------------------------------------------------------------
+
+interface UsageNoteProps {
+  sessionsUsed: number | null
+  isPremiumActive: boolean
+}
+
+function UsageNote({ sessionsUsed, isPremiumActive }: UsageNoteProps) {
+  if (isPremiumActive || sessionsUsed === null) return null
+  const remaining = Math.max(0, FREE_LIMIT - sessionsUsed)
+
+  if (remaining === 0) {
+    return (
+      <div
+        className="flex items-center gap-2 rounded-lg border px-3 py-2"
+        style={{
+          background: 'color-mix(in srgb, var(--bg-card) 85%, #ef4444 15%)',
+          borderColor: 'rgba(239,68,68,0.4)',
+        }}
+      >
+        <Info className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+        <p className="text-xs text-red-400 font-medium">
+          Bạn đã dùng hết {FREE_LIMIT} lần miễn phí. Cần nâng cấp Premium để tiếp tục.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="flex items-center gap-2 rounded-lg px-3 py-2"
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+    >
+      <Info className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+        Còn{' '}
+        <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>
+          {remaining}/{FREE_LIMIT}
+        </span>{' '}
+        lần luyện tập miễn phí
+      </p>
     </div>
   )
 }
@@ -98,11 +157,39 @@ export default function PracticePage() {
   const [questionCount, setQuestionCount] = useState(5)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showLimitModal, setShowLimitModal] = useState(false)
+
+  // Usage state (fetched client-side from stats endpoint)
+  const [sessionsUsed, setSessionsUsed] = useState<number | null>(null)
+  const [isPremiumActive, setIsPremiumActive] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/dashboard/stats')
+      .then((r) => r.json())
+      .then((data) => {
+        if (typeof data.sessionsUsed === 'number') {
+          setSessionsUsed(data.sessionsUsed)
+        }
+        if (typeof data.isPremiumActive === 'boolean') {
+          setIsPremiumActive(data.isPremiumActive)
+        }
+      })
+      .catch(() => {
+        // Non-fatal — the API will enforce limits anyway
+      })
+  }, [])
 
   const canStart = selectedPart !== null && selectedTopic !== null
 
   async function handleStart() {
     if (!canStart) return
+
+    // Client-side pre-check to show modal immediately (UX optimisation)
+    if (!isPremiumActive && sessionsUsed !== null && sessionsUsed >= FREE_LIMIT) {
+      setShowLimitModal(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -120,18 +207,33 @@ export default function PracticePage() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error ?? 'Failed to generate questions')
+        if (data.error === 'LIMIT_REACHED') {
+          setShowLimitModal(true)
+          setLoading(false)
+          return
+        }
+        throw new Error(data.error ?? 'Không thể tạo câu hỏi')
+      }
+
+      // Update local remaining count if returned
+      if (typeof data.remaining === 'number' && sessionsUsed !== null) {
+        setSessionsUsed(sessionsUsed + 1)
       }
 
       router.push(`/practice/${data.sessionId}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      setError(
+        err instanceof Error ? err.message : 'Có lỗi xảy ra. Vui lòng thử lại.',
+      )
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 pb-20">
+    <div
+      className="min-h-screen pb-20"
+      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}
+    >
       <div className="max-w-3xl mx-auto px-4 py-10">
 
         {/* Header */}
@@ -142,13 +244,19 @@ export default function PracticePage() {
           className="mb-10"
         >
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center border"
+              style={{
+                background: 'rgba(59,130,246,0.12)',
+                borderColor: 'rgba(59,130,246,0.25)',
+              }}
+            >
               <Mic className="w-5 h-5 text-blue-400" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-100">Topic Practice</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Luyện tập chủ đề</h1>
           </div>
-          <p className="text-slate-400 ml-[52px]">
-            Choose a topic and IELTS part to get AI-generated questions and real-time grading.
+          <p className="ml-[52px] text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Chọn chủ đề và phần IELTS để nhận câu hỏi từ AI và chấm điểm thời gian thực.
           </p>
         </motion.div>
 
@@ -159,11 +267,17 @@ export default function PracticePage() {
           transition={{ delay: 0.1 }}
           className="flex items-center gap-6 mb-8"
         >
-          <StepBadge n={1} label="Select Part" done={selectedPart !== null} />
-          <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
-          <StepBadge n={2} label="Select Topic" done={selectedTopic !== null} />
-          <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
-          <StepBadge n={3} label="Settings" done={false} />
+          <StepBadge n={1} label="Chọn phần" done={selectedPart !== null} />
+          <ChevronRight
+            className="w-4 h-4 flex-shrink-0"
+            style={{ color: 'var(--text-muted)' }}
+          />
+          <StepBadge n={2} label="Chọn chủ đề" done={selectedTopic !== null} />
+          <ChevronRight
+            className="w-4 h-4 flex-shrink-0"
+            style={{ color: 'var(--text-muted)' }}
+          />
+          <StepBadge n={3} label="Cài đặt" done={false} />
         </motion.div>
 
         <div className="flex flex-col gap-6">
@@ -178,9 +292,9 @@ export default function PracticePage() {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
                   <Layers className="w-4 h-4 text-blue-400" />
-                  <CardTitle>Step 1 — Select Part</CardTitle>
+                  <CardTitle>Bước 1 — Chọn phần</CardTitle>
                 </div>
-                <CardDescription>Choose which IELTS Speaking part to practice</CardDescription>
+                <CardDescription>Chọn phần IELTS Speaking muốn luyện tập</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -190,25 +304,50 @@ export default function PracticePage() {
                       <button
                         key={part.id}
                         onClick={() => setSelectedPart(part.id)}
-                        className={`relative rounded-xl border p-4 text-left transition-all duration-200 ${
+                        className="relative rounded-xl border p-4 text-left transition-all duration-200"
+                        style={
                           active
-                            ? 'border-blue-500 bg-blue-500/10 ring-1 ring-blue-500'
-                            : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
-                        }`}
+                            ? {
+                                borderColor: '#3b82f6',
+                                background: 'rgba(59,130,246,0.10)',
+                                boxShadow: '0 0 0 1px #3b82f6',
+                              }
+                            : {
+                                borderColor: 'var(--border)',
+                                background: 'var(--bg-surface)',
+                              }
+                        }
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <span className={`text-sm font-bold ${active ? 'text-blue-400' : 'text-slate-200'}`}>
+                          <span
+                            className="text-sm font-bold"
+                            style={{ color: active ? '#60a5fa' : 'var(--text-primary)' }}
+                          >
                             {part.label}
                           </span>
                           {active && (
                             <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 12 12">
-                                <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                              <svg
+                                className="w-2.5 h-2.5 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 12 12"
+                              >
+                                <path
+                                  d="M10 3L5 8.5 2 5.5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  fill="none"
+                                />
                               </svg>
                             </div>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 leading-relaxed mb-2">
+                        <p
+                          className="text-xs leading-relaxed mb-2"
+                          style={{ color: 'var(--text-muted)' }}
+                        >
                           {part.description}
                         </p>
                         <Badge variant="outline" className="text-xs">
@@ -235,9 +374,11 @@ export default function PracticePage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4 text-blue-400" />
-                      <CardTitle>Step 2 — Select Topic</CardTitle>
+                      <CardTitle>Bước 2 — Chọn chủ đề</CardTitle>
                     </div>
-                    <CardDescription>Pick a topic for your {selectedPart?.replace('PART', 'Part ')} practice session</CardDescription>
+                    <CardDescription>
+                      Chọn chủ đề cho phiên {selectedPart?.replace('PART', 'Part ')} của bạn
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -250,14 +391,27 @@ export default function PracticePage() {
                             onClick={() => setSelectedTopic(topic)}
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
-                            className={`flex flex-col items-center gap-1.5 rounded-xl border py-3 px-2 text-center transition-all duration-200 ${
+                            className="flex flex-col items-center gap-1.5 rounded-xl border py-3 px-2 text-center transition-all duration-200"
+                            style={
                               active
-                                ? 'border-blue-500 bg-blue-500/10 ring-1 ring-blue-500'
-                                : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
-                            }`}
+                                ? {
+                                    borderColor: '#3b82f6',
+                                    background: 'rgba(59,130,246,0.10)',
+                                    boxShadow: '0 0 0 1px #3b82f6',
+                                  }
+                                : {
+                                    borderColor: 'var(--border)',
+                                    background: 'var(--bg-surface)',
+                                  }
+                            }
                           >
                             <span className="text-2xl leading-none">{emoji}</span>
-                            <span className={`text-xs font-medium leading-tight ${active ? 'text-blue-300' : 'text-slate-300'}`}>
+                            <span
+                              className="text-xs font-medium leading-tight"
+                              style={{
+                                color: active ? '#93c5fd' : 'var(--text-secondary)',
+                              }}
+                            >
                               {topic}
                             </span>
                           </motion.button>
@@ -283,14 +437,19 @@ export default function PracticePage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Settings2 className="w-4 h-4 text-blue-400" />
-                      <CardTitle>Step 3 — Settings</CardTitle>
+                      <CardTitle>Bước 3 — Cài đặt</CardTitle>
                     </div>
-                    <CardDescription>Customise the number of questions</CardDescription>
+                    <CardDescription>Tuỳ chỉnh số lượng câu hỏi</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm text-slate-300 font-medium">Number of Questions</span>
+                        <span
+                          className="text-sm font-medium"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
+                          Số câu hỏi
+                        </span>
                         <motion.span
                           key={questionCount}
                           initial={{ scale: 1.3, opacity: 0 }}
@@ -305,18 +464,30 @@ export default function PracticePage() {
                           <button
                             key={n}
                             onClick={() => setQuestionCount(n)}
-                            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            className="flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                            style={
                               questionCount === n
-                                ? 'bg-blue-500 text-white shadow-md shadow-blue-500/30'
-                                : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-slate-200'
-                            }`}
+                                ? {
+                                    background: '#3b82f6',
+                                    color: '#fff',
+                                    boxShadow: '0 4px 12px rgba(59,130,246,0.30)',
+                                  }
+                                : {
+                                    background: 'var(--bg-surface)',
+                                    border: '1px solid var(--border)',
+                                    color: 'var(--text-muted)',
+                                  }
+                            }
                           >
                             {n}
                           </button>
                         ))}
                       </div>
-                      <p className="text-xs text-slate-500 mt-2">
-                        Approx. {questionCount * 2}–{questionCount * 3} minutes
+                      <p
+                        className="text-xs mt-2"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        Khoảng {questionCount * 2}–{questionCount * 3} phút
                       </p>
                     </div>
                   </CardContent>
@@ -336,34 +507,68 @@ export default function PracticePage() {
                 className="flex flex-col gap-4"
               >
                 {/* Summary card */}
-                <div className="rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/10 to-purple-500/10 px-5 py-4">
-                  <p className="text-xs uppercase tracking-wide text-slate-500 mb-3 font-medium">Session Summary</p>
+                <div
+                  className="rounded-xl border px-5 py-4"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(168,85,247,0.08) 100%)',
+                    borderColor: 'rgba(59,130,246,0.2)',
+                  }}
+                >
+                  <p
+                    className="text-xs uppercase tracking-wide mb-3 font-medium"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    Tóm tắt phiên
+                  </p>
                   <div className="flex flex-wrap gap-3">
                     <div className="flex items-center gap-2 text-sm">
                       <Layers className="w-4 h-4 text-blue-400" />
-                      <span className="text-slate-300">{selectedPart?.replace('PART', 'Part ')}</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {selectedPart?.replace('PART', 'Part ')}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="text-lg leading-none">{getTopicEmoji(selectedTopic!)}</span>
-                      <span className="text-slate-300">{selectedTopic}</span>
+                      <span className="text-lg leading-none">
+                        {getTopicEmoji(selectedTopic!)}
+                      </span>
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {selectedTopic}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <BookOpen className="w-4 h-4 text-blue-400" />
-                      <span className="text-slate-300">{questionCount} questions</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {questionCount} câu hỏi
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Briefcase className="w-4 h-4 text-blue-400" />
-                      <span className="text-slate-300">AI grading</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        Chấm điểm AI
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Error */}
                 {error && (
-                  <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                  <div
+                    className="rounded-lg border px-4 py-3 text-sm text-red-400"
+                    style={{
+                      background: 'rgba(239,68,68,0.08)',
+                      borderColor: 'rgba(239,68,68,0.3)',
+                    }}
+                  >
                     {error}
                   </div>
                 )}
+
+                {/* Usage note */}
+                <UsageNote
+                  sessionsUsed={sessionsUsed}
+                  isPremiumActive={isPremiumActive}
+                />
 
                 {/* Start button */}
                 <Button
@@ -375,12 +580,12 @@ export default function PracticePage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Generating questions…
+                      Đang tạo câu hỏi…
                     </>
                   ) : (
                     <>
                       <Mic className="w-5 h-5" />
-                      Start Practice Session
+                      Bắt đầu phiên luyện tập
                     </>
                   )}
                 </Button>
@@ -389,6 +594,12 @@ export default function PracticePage() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Usage limit modal */}
+      <UsageLimitModal
+        open={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+      />
     </div>
   )
 }

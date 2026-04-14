@@ -49,6 +49,9 @@ model User {
   image            String?
   passwordHash     String?
   plan             Plan      @default(FREE)
+  isPremium        Boolean   @default(false)
+  premiumUntil     DateTime?
+  sessionsUsed     Int       @default(0)
   xp               Int       @default(0)
   streak           Int       @default(0)
   lastActiveDate   DateTime?
@@ -61,6 +64,7 @@ model User {
   vocabulary       VocabEntry[]
   activityLogs     ActivityLog[]
   beginnerProgress BeginnerProgress[]
+  premiumOrders    PremiumOrder[]
 }
 
 model PracticeSession {
@@ -110,21 +114,48 @@ model ActivityLog {
 }
 
 model BeginnerProgress {
-  id       String @id @default(cuid())
-  userId   String
-  lessonId String
+  id        String  @id @default(cuid())
+  userId    String
+  lessonId  String
   completed Boolean @default(false)
-  xpEarned Int     @default(0)
+  xpEarned  Int     @default(0)
 
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
+}
+
+model PremiumOrder {
+  id          String      @id @default(cuid())
+  userId      String
+  plan        PremiumPlan
+  months      Int
+  amount      Int
+  status      OrderStatus @default(PENDING)
+  transferNote String?
+  confirmedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Plan {
   FREE
   PRO
   PREMIUM
+}
+
+enum PremiumPlan {
+  ONE_MONTH
+  TWO_MONTHS
+  THREE_MONTHS
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
 }
 
 enum SessionType {
