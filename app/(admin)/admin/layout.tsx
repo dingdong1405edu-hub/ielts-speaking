@@ -31,6 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <NavLink href="/admin">Tổng quan</NavLink>
               <NavLink href="/admin/vocabulary">Từ vựng</NavLink>
               <NavLink href="/admin/grammar">Ngữ pháp</NavLink>
+              <NavLink href="/admin/reading">Luyện đọc</NavLink>
             </nav>
           </div>
           <div className="flex items-center gap-4 text-sm">

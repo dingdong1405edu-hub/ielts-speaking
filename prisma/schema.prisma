@@ -59,6 +59,7 @@ model User {
   progress      UserProgress[]
   lessonHistory LessonHistory[]
   examResults   ExamResult[]
+  savedVocab    SavedVocab[]
 }
 
 model Vocabulary {
@@ -133,6 +134,41 @@ model ExamResult {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, takenAt])
+}
+
+model ReadingPassage {
+  id          String   @id @default(cuid())
+  title       String
+  titleVi     String
+  hskLevel    Int
+  content     String   @db.Text   // Chinese text
+  pinyin      String   @db.Text
+  translation String   @db.Text   // Vietnamese translation
+  vocabulary  Json     @default("[]") // [{hanzi, pinyin, meaning}]
+  questions   Json     @default("[]") // [{question, options[], answer, explanation}]
+  tags        String[]
+  difficulty  String   @default("medium") // easy, medium, hard
+  wordCount   Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([hskLevel, published])
+}
+
+model SavedVocab {
+  id        String   @id @default(cuid())
+  userId    String
+  hanzi     String
+  pinyin    String
+  meaning   String
+  source    String?  // "reading:passage-id"
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hanzi])
+  @@index([userId])
 }
 
 enum LessonType {
